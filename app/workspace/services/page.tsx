@@ -1,0 +1,1 @@
+import { ServiceList } from "@/components/services/service-list";import { WorkspaceSidebar } from "@/components/workspace/workspace-sidebar";export default function Page(){return <><WorkspaceSidebar activeItem="服务"/><ServiceList/></>}
