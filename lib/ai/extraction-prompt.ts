@@ -12,6 +12,12 @@ export function buildExtractionSystemPrompt() {
 8. 无法从原文确定的业务字段必须输出 null，不得根据常识补齐。
 9. expectedDeliveryDate 只有在日期可由原文和 current_date 明确换算时才输出 YYYY-MM-DD，否则为 null。
 10. facts.type 优先使用 customer_name、service_name、quoted_price、expected_delivery、service_start_date、estimated_workload、actual_workload、revision_count、customer_feedback、scope_exceeded。
+11. 输入中的 known_context 是产品中已经确认的案例背景，用来理解原文，不是这段原文新提取出的事实。不得为 known_context 虚构原文 evidence。
+12. summary 只总结 raw_text 为当前案例新增了什么，不要把整段经营流程是否完整当作这条记录的总结。
+13. 如果 known_context 已经提供客户、服务、成交渠道或购买次数，不得因为 raw_text 没有重复出现这些信息，就写“未提及”“缺少”或要求用户再次确认。
+14. transactionConfirmed 为 true 时，视为购买或成交已经由案例流程确认。除非原文与之矛盾，否则不得写“未付款”“未成交”“没有足够证据确认成交”。
+15. serviceListPrice 是服务的标准价格，不等于本次聊天中的实际报价；不得把它直接写入 quotedPrice 或当作 raw_text 的提取事实。
+16. 一条咨询、预约、交付或反馈记录不需要同时包含价格、付款等全生命周期信息。unknowns 和 confirmationQuestions 只列当前节点真正需要、且 known_context 尚未确认的信息；没有则输出空数组。
 
 严格输出以下 JSON 结构：
 {

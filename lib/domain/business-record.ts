@@ -14,7 +14,20 @@ export const recordExtractionRequestSchema = z.object({
   rawText: z.string().trim().min(5).max(50_000),
   sourceType: z.enum(recordSourceTypes).default("auto"),
   occurredAt: z.string().nullable().optional(),
+  context: z.object({
+    customerName: z.string().trim().max(120).nullable().optional(),
+    serviceName: z.string().trim().max(160).nullable().optional(),
+    stageLabel: z.string().trim().max(160).nullable().optional(),
+    stageType: z.string().trim().max(80).nullable().optional(),
+    discoveryChannel: z.string().trim().max(120).nullable().optional(),
+    transactionChannel: z.string().trim().max(120).nullable().optional(),
+    transactionConfirmed: z.boolean().optional(),
+    serviceListPrice: z.number().nonnegative().nullable().optional(),
+    purchaseNumber: z.number().int().positive().nullable().optional(),
+  }).optional(),
 });
+
+export type RecordExtractionContext = NonNullable<z.infer<typeof recordExtractionRequestSchema>["context"]>;
 
 export type ExtractedFact = {
   type: string;

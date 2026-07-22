@@ -1,7 +1,99 @@
 "use client";
-import { useEffect,useState } from "react";import Link from "next/link";import Image from "next/image";import { ArrowRight,Plus } from "lucide-react";import { useLocalCases } from "@/components/cases/use-local-cases";import { useLocalServices } from "@/components/services/use-local-services";import { useLanguage } from "@/components/i18n/language-provider";import type { Locale } from "@/lib/i18n/config";
-const copy={en:{today:"Today",whisper:"Water remembers.",created:(n:string)=>`Service “${n}” created`,emptyTitle:"Begin with one service.",emptyBody:"Define the service you actually provide.\n\nEverything that follows — every customer, every delivery, every reflection — will grow from here.",create:"Define your service",ready:"Your service is ready",steps:"standard steps",start:"Begin the first case",workflow:"View the journey",focus:"Worth holding today",next:"Next",open:"Open case",bee:"BEE IS NOTICING"},"zh-CN":{today:"今日",whisper:"水会记得。",created:(n:string)=>`服务“${n}”已创建`,emptyTitle:"从一项服务开始。",emptyBody:"定义你真正提供的服务。\n\n从这里开始——每一位客户、每一次交付、每一场回望——都会由此生长。",create:"定义你的服务",ready:"你的服务已经准备好了",steps:"个标准步骤",start:"开始第一个案例",workflow:"查看服务旅程",focus:"今天值得留意",next:"下一步",open:"打开案例",bee:"BEE 正在留意"},"zh-TW":{today:"今日",whisper:"水會記得。",created:(n:string)=>`服務「${n}」已建立`,emptyTitle:"從一項服務開始。",emptyBody:"定義你真正提供的服務。\n\n從這裡開始——每一位客戶、每一次交付、每一場回望——都會由此生長。",create:"定義你的服務",ready:"你的服務已經準備好了",steps:"個標準步驟",start:"開始第一個案例",workflow:"查看服務旅程",focus:"今天值得留意",next:"下一步",open:"開啟案例",bee:"BEE 正在留意"}};
-const digits=["〇","一","二","三","四","五","六","七","八","九"],weekdays=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
-function cnNumber(v:number){if(v<10)return digits[v];if(v===10)return"十";if(v<20)return`十${digits[v%10]}`;return`${digits[Math.floor(v/10)]}十${v%10?digits[v%10]:""}`}
-function editorialDate(locale:Locale,date:Date){if(locale==="en"){const month=date.toLocaleDateString("en-US",{month:"long"}).toUpperCase(),day=date.toLocaleDateString("en-US",{weekday:"long"}).toUpperCase();return`${month} ${date.getDate()} · ${day}`}return`${cnNumber(date.getMonth()+1)}月${cnNumber(date.getDate())}日 · ${weekdays[date.getDay()]}`}
-export function TodayHome(){const current=useLocalCases()[0];const{services}=useLocalServices();const{locale}=useLanguage();const t=copy[locale];const[toast,setToast]=useState("");useEffect(()=>{const value=localStorage.getItem("bewater_service_toast");if(!value)return;setToast(value);localStorage.removeItem("bewater_service_toast");const id=setTimeout(()=>setToast(""),3500);return()=>clearTimeout(id)},[]);return <main className="min-h-dvh lg:ml-[224px]"><div className="mx-auto max-w-[1040px] px-5 pb-14 pt-20 sm:px-8 lg:px-14 lg:pt-24">{toast?<div className="fixed right-8 top-16 z-50 rounded-xl bg-[#284f5e] px-4 py-3 text-sm text-white shadow-xl">{t.created(toast)}</div>:null}<header><p className={`page-date ${locale==="en"?"page-date-en":"page-date-zh"}`}>{editorialDate(locale,new Date())}</p><h1 className="today-heading mt-3">{t.today}</h1></header>{!services.length?<section className="welcome-card mt-14 max-w-[760px]"><p className="brand-whisper">{t.whisper}</p><div className="mt-4 flex items-start gap-4"><div className="bee-water-shadow relative shrink-0"><Image src="/assets/bee/bee-avatar.png" alt="Bee" width={54} height={54} className="bee-float relative z-10 size-[54px] rounded-full object-cover mix-blend-multiply"/></div><div><h2 className={locale==="en"?"empty-title-en":"empty-title-zh"}>{t.emptyTitle}</h2><p className="empty-description mt-4 whitespace-pre-line">{t.emptyBody}</p><Link href="/workspace/services/new" className="primary-button mt-7"><Plus className="size-3.5"/>{t.create}</Link></div></div></section>:!current?<section className="welcome-card mt-14 max-w-[760px]"><p className="text-[15px] text-[var(--muted)]">{t.ready}</p><h2 className="mt-3 text-[28px] font-[580]">{services[0].name}</h2><p className="mt-2 text-[15px] text-[var(--muted)]">{services[0].workflow.length} {t.steps}</p><div className="mt-7 flex flex-wrap gap-3"><Link href={`/workspace/cases/new?serviceId=${services[0].id}`} className="primary-button">{t.start}</Link><Link href={`/workspace/services/${services[0].id}`} className="inline-flex h-11 items-center rounded-[10px] border border-[var(--line-strong)] bg-white px-5 text-[15px] font-medium">{t.workflow}</Link></div></section>:<div className="mt-12 grid gap-8 lg:grid-cols-[1fr_300px]"><section className="rounded-[26px] bg-white/55 p-8"><p className="text-[15px] text-[var(--muted)]">{t.focus}</p><h2 className="mt-4 text-[26px] font-[580] leading-10">{current.customerName} · {current.serviceName}</h2><p className="mt-3 text-[15px] text-[var(--muted)]">{t.next}：{current.nextAction}</p><Link href={`/workspace/cases/${current.id}`} className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-dark)]">{t.open}<ArrowRight className="size-4"/></Link></section><aside className="mist-panel rounded-[24px] p-6"><p className="text-xs font-semibold text-[var(--brand)]">{t.bee}</p><p className="mt-4 text-[15px] leading-[1.7]">{current.events.length} {locale==="en"?"real records so far. More evidence will reveal patterns.":locale==="zh-TW"?"條真實記錄。繼續記錄，規律才會從事實裡浮現。":"条真实记录。继续记录，规律才会从事实里浮现。"}</p></aside></div>}</div></main>}
+
+import Image from "next/image";
+import Link from "next/link";
+import {ArrowRight, BookOpenText, BriefcaseBusiness, Eye, Files} from "lucide-react";
+import {useLocale, useTranslations} from "next-intl";
+import {LanguageSwitcher} from "@/components/i18n/language-switcher";
+import {SplitText} from "@/components/ui/split-text";
+import {SpotlightCard} from "@/components/ui/spotlight-card";
+import {type EvidenceType, useBusinessMemory} from "@/lib/prototype/business-memory";
+
+const journey = [
+  {index: "01", key: "service", icon: BriefcaseBusiness},
+  {index: "02", key: "case", icon: Files},
+  {index: "03", key: "observation", icon: Eye},
+  {index: "04", key: "principle", icon: BookOpenText}
+] as const;
+
+export function TodayHome() {
+  const t = useTranslations("home");
+  const locale = useLocale();
+  const model = useBusinessMemory();
+  const cases = model.services.flatMap((service) => service.cases);
+  const evidence = cases.flatMap((item) => item.evidence);
+  const evidenceTypes: EvidenceType[] = ["conversation", "quote", "delivery", "feedback", "note"];
+  const patterns = evidenceTypes.filter((type) => evidence.filter((item) => item.type === type).length >= 2).length;
+  const observations = cases.filter((item) => item.evidence.length > 0).length;
+  const memory = [
+    {key: "observation", value: observations},
+    {key: "pattern", value: patterns},
+    {key: "principle", value: 0}
+  ] as const;
+
+  return (
+    <main className={`brand-home min-h-dvh overflow-hidden ${locale === "en" ? "is-english" : "is-chinese"}`}>
+      <header className="brand-nav brand-nav-minimal">
+        <Link href="/workspace" className="brand-signature" aria-label={t("brandLabel")}>
+          <Image src="/assets/brand/bee-drop-mark.svg" alt="" width={34} height={34} className="size-[34px] rounded-xl"/>
+          <span>Be Water</span>
+        </Link>
+        <LanguageSwitcher/>
+      </header>
+
+      <section className="brand-hero business-memory-hero">
+        <span className="home-water-wash" aria-hidden="true"/>
+        <div className="brand-hero-grid">
+          <div className="brand-hero-copy">
+            <h1 className="brand-hero-title">
+              <SplitText tag="span" text={t("hero.titleLine1")} className="brand-hero-line" delay={34} duration={0.9} rootMargin="0px"/>
+              <br/>
+              <SplitText tag="span" text={t("hero.titleLine2")} className="brand-hero-line brand-hero-accent" delay={34} startDelay={0.16} duration={0.9} rootMargin="0px"/>
+            </h1>
+            <p className="brand-method">{t("hero.method")}</p>
+            <div className="brand-hero-actions">
+              <SpotlightCard className="brand-action-spotlight" spotlightColor="rgba(232, 249, 255, 0.42)">
+                <Link href="/services" className="brand-primary-action">{t("hero.primaryAction")}<ArrowRight className="size-4"/></Link>
+              </SpotlightCard>
+            </div>
+          </div>
+
+          <aside className="business-memory-panel" aria-label={t("memory.title")}>
+            <div className="memory-ripple" aria-hidden="true"/>
+            <div className="relative z-10">
+              <div className="memory-state">
+                <span>{evidence.length ? t(patterns ? "memory.patternState" : "memory.observationState") : t("memory.emptyState")}</span>
+                {evidence.length ? <strong>{t(patterns ? "memory.patternDescription" : "memory.observationDescription", {evidence: evidence.length, patterns})}</strong> : <div className="memory-sources"><p className="memory-source-intro"><span className="memory-bee" aria-hidden="true"><Image src="/assets/brand/bee-memory.png" alt="" width={24} height={24}/></span><span>{t("memory.sourceIntro")}</span></p><div>{(["service", "case", "feedback"] as const).map((item) => <span key={item}>{t(`memory.sources.${item}`)}</span>)}</div></div>}
+                {evidence.length ? <Link href="/notebook">{t("memory.openNotebook")}<ArrowRight className="size-4"/></Link> : null}
+              </div>
+              <div className="memory-counts">
+                {memory.map((item) => <div key={item.key}><span>{t(`memory.${item.key}`)}</span><strong>{item.value}</strong><small>{t("memory.unit")}</small></div>)}
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section className="commercial-loop business-memory-loop">
+        <div className="loop-intro">
+          <h2>{t("loop.title")}</h2>
+          <span>{t("loop.description")}</span>
+        </div>
+        <div className="loop-steps">
+          {journey.map(({index, key, icon: Icon}, itemIndex) => (
+            <div key={index} className="contents">
+              <article className="loop-card">
+                <p>{index}</p><h3>{t(`loop.steps.${key}.title`)}</h3><span>{t(`loop.steps.${key}.description`)}</span>
+                <Icon className="mt-5 size-5 text-[var(--brand)]" strokeWidth={1.5}/>
+                {key === "principle" ? <Link href="/notebook" className="loop-card-link" aria-label={t("loop.openReflection")}/> : null}
+              </article>
+              {itemIndex < journey.length - 1 ? <ArrowRight className="loop-arrow"/> : null}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer className="brand-footer">{t("footer")}</footer>
+    </main>
+  );
+}

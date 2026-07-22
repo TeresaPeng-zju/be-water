@@ -1,0 +1,119 @@
+{
+  "language": {"switch": "切换语言", "menu": "语言", "currentChinese": "简体中文"},
+  "common": {"login": "登录", "bee": "Bee", "settings": "设置", "account": "账户", "signOut": "退出登录"},
+  "stageBuilder": {"add": "加入一个阶段", "typeLabel": "这是什么类型的事实？", "nameLabel": "这个阶段叫什么？", "confirmAdd": "加入阶段", "cancelAdd": "取消", "presetLabel": "预设节点 · 名称固定", "customPlaceholder": "例如：会议预沟通", "types": {"conversation": "沟通类", "quote": "报价类", "delivery": "交付类", "feedback": "反馈类", "note": "普通事实"}},
+  "customerLinking": {"existingTitle": "找到同名客户", "history": "已记录 {count} 次服务", "services": "购买过：{services}", "repeat": "这将是 TA 的第 {number} 次购买", "repeatShort": "第 {number} 次购买", "newCustomer": "将作为一位新客户记录", "differentPerson": "同名，但不是同一个人", "linked": "已关联到这位客户"},
+  "channels": {"question": "这项服务在哪里对外提供？", "hint": "选择真实使用的渠道，并留下大概从什么时候开始。", "platforms": {"xiaohongshu": "小红书", "xianyu": "闲鱼", "zhishixingqiu": "知识星球", "wechat": "微信", "douyin": "抖音", "offline": "线下", "other": "其他"}, "launchDate": "上线日期", "statusLabel": "当前状态", "statuses": {"testing": "测试中", "active": "正在提供", "paused": "已暂停"}, "otherPlaceholder": "平台名称", "remove": "移除渠道", "sectionEyebrow": "上线渠道", "sectionTitle": "这项服务在哪里被看见", "sectionDescription": "记录渠道和上线时间，Bee 才能比较不同来源留下的真实结果。", "empty": "还没有记录上线渠道。", "edit": "调整上线渠道", "save": "保存渠道", "cancel": "取消", "discoveryQuestion": "客户最初在哪里发现你？", "transactionQuestion": "最后在哪里成交或付款？", "transactionHint": "如果和发现渠道相同，可以直接使用同一项。", "unknown": "暂时不知道", "discoveredVia": "来自 {channel}", "transactedVia": "成交于 {channel}"},
+  "evidenceActions": {"processing": "Bee 正在整理这条事实…", "organize": "让 Bee 整理", "retry": "整理失败，重新尝试", "refresh": "重新整理", "showRaw": "查看原始记录", "delete": "删除这条事实", "deleteTitle": "删除这条事实？", "deleteDescription": "原始记录和 Bee 从中整理出的内容都会被移除。其他事实和案例不会受到影响。", "cancelDelete": "先保留", "confirmDelete": "删除事实"},
+  "navigation": {"home": "首页", "coach": "教练", "journey": "路径", "insights": "洞察", "resources": "工作区", "today": "今日", "services": "服务", "cases": "案例", "reflection": "回望", "workspaceLabel": "工作区导航"},
+  "home": {
+    "brandLabel": "Be Water 首页",
+    "headerPrimaryGuest": "开始商业诊断",
+    "headerPrimaryUser": "回到今日行动",
+    "hero": {
+      "eyebrow": "你的经营记忆",
+      "titleLine1": "真正值钱的，\n不是一次服务。",
+      "titleLine2": "而是它留下来的\n经验。",
+      "description": "Bee 会替你记住。",
+      "method": "记录真实经营，让反复出现的线索慢慢成为属于你的方法。",
+      "primaryAction": "探索我的源泉"
+    },
+    "insight": {
+      "sampleLabel": "示例洞察",
+      "todayLabel": "今日洞察",
+      "sampleTitle": "Bee 会基于你的服务、案例与真实记录形成判断。",
+      "realTitle": "真实工作正在留下线索。",
+      "realEmphasis": "继续行动，判断会变得更清晰。",
+      "sampleNote": "完成首次诊断后生成",
+      "todayAction": "查看今日行动",
+      "metrics": {"positioning": "定位清晰度", "expression": "价值表达力", "attraction": "客户吸引力", "growth": "持续增长力"}
+    },
+    "flow": {"label": "流动", "sample": "待生成", "caption": "当前成长势能"},
+    "memory": {"eyebrow": "经营记忆", "title": "经验会在这里留下来", "observation": "观察", "pattern": "模式", "principle": "原则", "unit": "条", "emptyState": "第一条线索，\n正在等你留下...", "sourceIntro": "Bee 会慢慢发现：", "sources": {"service": "服务", "case": "案例", "feedback": "客户反馈"}, "emptyDescription": "先留下事实。观察会自己出现。", "emptyAction": "记录我的案例", "observationState": "Bee 正在整理你留下的事实", "observationDescription": "已有 {evidence} 条事实进入经营记忆。再多一些真实经历，重复出现的线索就会浮现。", "patternState": "有些线索正在反复出现", "patternDescription": "Bee 已从真实记录中发现 {patterns} 个重复信号。", "openNotebook": "查看 Bee 的观察"},
+    "loop": {
+      "eyebrow": "经营资产",
+      "title": "真实经营，如何慢慢成为方法",
+      "description": "先留下发生过的事，再让重复出现的线索自己浮现。",
+      "steps": {
+        "service": {"title": "服务", "description": "定义你提供的价值。"},
+        "case": {"title": "案例", "description": "记录一次真实经营。"},
+        "observation": {"title": "观察", "description": "发现反复出现的线索。"},
+        "principle": {"title": "原则", "description": "沉淀属于你的方法。"}
+      },
+      "openReflection": "进入回望"
+    },
+    "workspace": {
+      "eyebrow": "你的工作区",
+      "title": "从判断回到真实工作。",
+      "description": "服务、案例、记录与回望，都在这里继续生长。",
+      "serviceLabel": "服务",
+      "serviceAction": "建立第一项服务",
+      "currentLabel": "当前工作",
+      "caseAction": "开始第一个案例",
+      "beeLabel": "Bee 观察",
+      "beeAction": "查看 Bee 的观察"
+    },
+    "footer": "BE WATER, MY FRIEND."
+  },
+  "reflection": {
+    "eyebrow": "BEE 的观察笔记",
+    "title": "回望",
+    "description": "Bee 会记住真实工作中反复出现的线索。一次观察还不是结论，只有经过实验和验证，它才会慢慢成为属于你的经营原则。",
+    "tabs": {"observation": "观察", "experiment": "实验", "pattern": "模式", "principle": "原则"},
+    "emptyEyebrow": "证据仍在积累",
+    "emptyTitle": "Bee 还没有足够证据形成{stage}。",
+    "emptyDescription": "先完成一项真实服务，并留下案例与记录。重复出现的线索，才值得被沉淀。",
+    "evidenceCount": "{cases} 个案例 · {evidence} 条记录",
+    "activeEyebrow": "线索正在重复出现",
+    "activeTitle": "服务范围变化与额外投入",
+    "activeDescription": "Bee 会继续比较相似案例，在证据足够之前不急于下结论。"
+  },
+  "login": {
+    "eyebrow": "继续你的工作",
+    "title": "回到 Be Water",
+    "description": "输入邮箱，我们会发送一个安全登录链接。完成登录后，你会回到刚才准备继续的地方。",
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "you@example.com",
+    "submit": "发送登录链接",
+    "sending": "正在发送…",
+    "success": "登录链接已发送，请检查邮箱。",
+    "error": "暂时无法发送登录链接，请稍后重试。",
+    "back": "返回首页"
+  },
+  "today": {
+    "eyebrow": "TODAY",
+    "title": "今天发生了什么？",
+    "description": "先留下事实，不急着总结。经营中的方法，往往从一段看似普通的记录开始。",
+    "entries": {
+      "service": {"title": "记录今天的一次服务", "description": "交付了什么、花了多久、发生了哪些变化。"},
+      "case": {"title": "新增一个案例", "description": "把客户、服务和结果放在同一段真实经历里。"},
+      "feedback": {"title": "补充客户反馈", "description": "一句评价、一次复购或一个没有成交的原因。"}
+    },
+    "prompt": "把今天发生的事情写下来",
+    "placeholder": "不用整理语言。先写下事实、数字、对话或你的感受……",
+    "save": "留下这段记录",
+    "saved": "已经留下。以后它可能会成为一条线索。",
+    "back": "返回首页"
+  },
+  "prototype": {
+    "services": {"eyebrow": "我的经营", "title": "你主要提供哪些服务？", "description": "不用写产品介绍，我们一步一步来。", "add": "新增一项服务", "conversationLabel": "建立服务", "steps": {"0": {"question": "你主要提供哪项服务？", "hint": "选择最接近的一项，或者直接写下自己的。"}, "1": {"question": "这项服务通常怎么收费？", "hint": "选择最常用的方式，以后可以调整。"}, "2": {"question": "平均一次收多少钱？", "hint": "先留下你真实使用过的价格。"}, "3": {"question": "你通常需要投入多少时间？", "hint": "只算你真正花在交付上的时间。"}, "4": {"question": "通常多久能完成？", "hint": "从客户确认到完成交付，大约需要多久？"}, "5": {"question": "这项服务通常会经历哪些阶段？", "hint": "这是每次真实服务的故事线。可以拖动排序、删除或加入自己的阶段。"}}, "suggestions": {"careerPlanning": "职业规划", "resume": "简历修改", "interview": "模拟面试", "aiConsulting": "AI 咨询"}, "customService": "其他服务", "pricing": {"session": "按次", "hourly": "按小时", "package": "套餐", "retainer": "长期顾问"}, "customPrice": "其他价格", "effort": {"30m": "30 分钟", "1h": "1 小时", "2h": "2 小时", "4h": "4 小时"}, "minuteUnit": "分钟", "effortMinutes": "{count} 分钟", "effortHours": "{hours} 小时", "effortHoursMinutes": "{hours} 小时 {minutes} 分钟", "customEffort": "具体投入时间", "effortDecrease": "减少 10 分钟", "effortIncrease": "增加 10 分钟", "turnaround": {"sameDay": "当天", "threeDays": "3 天内", "oneWeek": "1 周内", "twoWeeks": "2 周内"}, "dayUnit": "天", "turnaroundDays": "{count} 天内", "customTurnaround": "具体交付天数", "turnaroundDecrease": "减少 1 天", "turnaroundIncrease": "增加 1 天", "stages": {"description": "先保留真实会发生的阶段。以后每个新案例都会从这条故事线开始。", "add": "加入一个阶段", "customPlaceholder": "例如：会议预沟通"}, "cancel": "先不建立", "previous": "上一步", "continue": "继续", "save": "保存这项服务", "legacyService": "继续补充真实案例", "lastUpdated": "最后记录：{date}", "dragHint": "拖动调整服务顺序", "copyName": "{name} · 副本", "menu": {"label": "更多操作", "edit": "编辑名称", "duplicate": "复制", "delete": "删除", "editPrompt": "这项服务叫什么？", "deleteTitle": "确认删除这项服务？", "deleteConfirm": "“{name}”和它留下的全部案例都会被删除。这个动作无法撤销。", "deleteCancel": "先保留", "deleteAction": "删除服务"}, "emptyEyebrow": "从你已经在卖的开始", "emptyTitle": "Bee 还不知道你卖什么。", "emptyDescription": "用几个真实数字建立第一项服务：收费方式、价格、耗时和交付周期。", "emptyAction": "告诉 Bee 我卖什么"},
+    "service": {"eyebrow": "一项真实服务", "back": "我的服务", "addCase": "记录一次服务", "legacyDescription": "这项服务还没有补充收费与时间", "recentSummary": "最近 30 天，留下了 {count} 次真实服务。", "whoQuestion": "这次服务了谁？", "whoHint": "一个名字或你认得出的称呼就够了。", "whenQuestion": "这次服务是哪一天？", "whenHint": "只留下发生时间，不需要现在总结。", "customerPlaceholder": "他叫什么？写一个以后认得出的称呼就够了。", "dateLabel": "发生日期", "cancel": "取消", "previous": "上一步", "continue": "继续", "save": "开始记录", "caseHasFacts": "这次经历正在留下来", "caseWaiting": "等待留下发生过的事", "legacyCase": "过去留下的一次服务", "deleteCaseLabel": "删除 {name} 的这次经历", "deleteCaseTitle": "删除这次经历？", "deleteCaseDescription": "“{name}”这次经历及其留下的全部原始事实和 Bee 整理结果都会被删除。这个动作无法撤销。", "deleteCaseCancel": "先保留", "deleteCaseConfirm": "删除经历", "emptyEyebrow": "一次真实服务", "emptyTitle": "今天刚服务完一个客户？", "emptyDescription": "先留下是谁、什么时候发生。聊天、报价、交付和反馈可以慢慢补。", "emptyAction": "记录第一次服务", "notFound": "没有找到这项服务。", "stages": {"eyebrow": "服务故事线", "title": "每次服务通常会经过这些阶段", "description": "它会成为新案例的 Timeline；已经发生的案例不会被改写。", "edit": "调整阶段模板", "editorHint": "拖动排序，删除不需要的阶段，或加入真实会发生的节点。", "save": "保存阶段模板"}},
+    "case": {"eyebrow": "一次真实服务", "services": "返回服务", "legacyCase": "过去留下的一次服务", "journeyEyebrow": "发生过的事实", "journeyTitle": "这次服务走到了哪里？", "journeyDescription": "点开任何一步，留下当时发生的事实。Bee 会负责理解它们。", "types": {"conversation": "第一次咨询", "quote": "报价", "delivery": "交付", "feedback": "客户反馈", "note": "其他事实"}, "stageHints": {"conversation": "粘贴一整段聊天，或添加原始截图", "quote": "记下你真正报出的价格", "delivery": "记下交付时间或完成情况", "feedback": "留下客户说过的话", "note": "留下这个阶段真实发生的内容"}, "factCount": "已留下 {count} 条", "addOther": "还有其他事实", "prompts": {"conversation": {"question": "第一次咨询里，发生了什么？", "hint": "直接粘贴整段聊天，不用删减，也不用先替 Bee 总结。截图可以作为原始附件一起留下。", "placeholder": "客户：你好，我想了解一下……\n\n你：你好……\n\n客户：我的预算大概是……"}, "quote": {"question": "你当时报价多少？", "hint": "只记下真实数字，不判断高或低。", "placeholder": "可以补充客户当时的反应（可选）"}, "delivery": {"question": "交付时发生了什么？", "hint": "写时间、完成情况或一次变化。", "placeholder": "例如：比原计划晚一天交付……"}, "feedback": {"question": "客户后来怎么说？", "hint": "原话最好，一句话也够。", "placeholder": "例如：谢谢老师，我终于知道下一步怎么选了。"}, "note": {"question": "还有什么事实值得留下？", "hint": "不用解释原因，先记住它。", "placeholder": "事实、数字或一整段原始对话……"}}, "uploadScreenshot": "添加原始截图（可选）", "quoteFact": "本次报价 ¥{amount}", "cancel": "取消", "save": "留下这条事实", "factsEyebrow": "Evidence", "factsTitle": "这次服务留下的事实", "notFound": "没有找到这个案例。"},
+    "notebook": {"eyebrow": "BEE NOTEBOOK", "title": "经营笔记", "description": "Bee 整理真实工作中反复出现的线索。这里不要求你写结论。", "beeRule": "一次发生只是事实；反复出现，才可能成为模式。", "observation": "观察", "pattern": "模式", "principle": "原则", "observationTitle": "{cases} 个案例留下了 {evidence} 条真实证据。", "observationBody": "这些证据来自 {services} 项服务。Bee 会继续比较它们之间的共同点。", "patternTitle": "“{type}”正在反复出现。", "patternBody": "相同类型的证据已经出现 {count} 次。这是一条值得继续观察的线索，还不是结论。", "pendingTitle": "证据正在积累，模式尚未形成。", "pendingBody": "Bee 不会用一次经历替你下结论。", "principleTitle": "原则需要更长时间。", "principleBody": "当一个模式经过不同案例反复验证，它才会慢慢成为属于你的经营方法。", "emptyEyebrow": "证据尚未形成", "emptyTitle": "Bee 还没有足够证据形成观察。", "emptyDescription": "先建立一项真实服务，并留下案例与证据。重复出现的线索，才值得被沉淀。", "emptyAction": "从服务开始", "analysisLabel": "Bee 正在观察", "analysisLoading": "正在把经营信息放在一起比较", "analysisLoadingBody": "服务基准、上线渠道、客户来源、复购关系、案例阶段和原始事实都会进入这次观察。", "analysisFailed": "这次观察暂时没有完成", "analysisFailedBody": "你的原始事实仍然完整保留，Bee 会在下次回来时重新尝试。", "sourceFallback": "查看依据", "types": {"conversation": "聊天记录", "quote": "报价", "delivery": "交付", "feedback": "客户反馈", "note": "个人记录"}}
+  },
+  "diagnosis": {
+    "eyebrow": "首次商业诊断",
+    "title": "先从真实发生的事情开始。",
+    "description": "不需要准备标准答案。Bee 会从你的能力、客户需要与已有证据中，找到第一条值得验证的路径。",
+    "progress": "第 {current} 步，共 {total} 步",
+    "questions": {
+      "ability": {"title": "别人最常因为什么来找你？", "hint": "写下一件你已经反复做过、并且别人愿意向你求助的事情。", "placeholder": "例如：帮创始人梳理品牌表达……"},
+      "outcome": {"title": "你通常能为他们带来什么变化？", "hint": "描述工作完成后，对方真正得到的结果。", "placeholder": "例如：让复杂的价值主张变得清晰、可被理解……"},
+      "evidence": {"title": "什么真实经历能证明这件事？", "hint": "一位客户、一次项目或一段反馈都可以。", "placeholder": "例如：最近一次项目中，客户在两周后……"}
+    },
+    "next": "继续",
+    "back": "上一步",
+    "complete": "完成诊断",
+    "saving": "正在形成第一条判断…"
+  }
+}

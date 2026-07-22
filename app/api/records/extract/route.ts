@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { buildExtractionSystemPrompt } from "@/lib/ai/extraction-prompt";
 import {
   recordExtractionRequestSchema,
+  type RecordExtractionContext,
   type RecordExtraction,
 } from "@/lib/domain/business-record";
 
-function localExtraction(rawText: string): RecordExtraction {
+function localExtraction(rawText: string, context?: RecordExtractionContext): RecordExtraction {
   const customerMatch = rawText.match(/^([^\n：:]{2,20})[：:]/m);
   const budgetMatch = rawText.match(/(?:预算|大概|价格)[^\d]{0,8}(\d+(?:\.\d+)?)/);
   const deliveryMatch = rawText.match(/(?:周[一二三四五六日天]|\d{1,2}[月/-]\d{1,2}[日号]?)(?:之前|前|交付|完成)?/);
@@ -17,15 +18,21 @@ function localExtraction(rawText: string): RecordExtraction {
   if (deliveryMatch) facts.push({ type: "expected_delivery", label: "期望交付", value: deliveryMatch[0], evidence: deliveryMatch[0], confidence: 0.7 });
   return {
     recordType: "customer_chat",
-    summary: facts.length ? `Bee 从这段记录中整理出 ${facts.length} 条待确认事实；目前没有足够证据确认已经成交。` : "这段记录已保存，但仍需要你补充客户、服务或经营阶段。",
-    participants: customerMatch ? [{ temporaryName: customerMatch[1].trim(), role: "customer" }] : [{ temporaryName: "unknown", role: "unknown" }],
+    summary: facts.length
+      ? `这段${context?.stageLabel ?? "记录"}新增了 ${facts.length} 条可核对的事实。`
+      : `这段${context?.stageLabel ?? "记录"}已经作为原始事实保存，Bee 会结合案例中的已知信息继续观察。`,
+    participants: context?.customerName
+      ? [{ temporaryName: context.customerName, role: "customer" }]
+      : customerMatch
+        ? [{ temporaryName: customerMatch[1].trim(), role: "customer" }]
+        : [{ temporaryName: "unknown", role: "unknown" }],
     facts,
-    stage: { value: "requirement_confirmation", confidence: 0.62, reason: "记录中出现了需求沟通，但未识别到明确付款或成交证据。" },
-    nextActions: [{ title: "确认需求、报价与交付时间", reason: "这些信息决定是否可以建立正式订单。" }],
-    unknowns: ["是否已经正式报价", "是否已经付款", "最终交付时间是否确认"],
+    stage: { value: context?.stageType ?? "requirement_confirmation", confidence: context?.stageType ? 0.9 : 0.62, reason: context?.stageLabel ? `这条记录来自“${context.stageLabel}”节点。` : "记录中出现了需求沟通。" },
+    nextActions: [],
+    unknowns: [],
     risks: deliveryMatch ? [{ type: "short_delivery_window", level: "medium", reason: "记录中出现了明确交付时间，但尚未核对当前排期。" }] : [],
-    customerName: customerMatch?.[1]?.trim() ?? null,
-    serviceName: serviceMatch?.[1]?.trim() ?? null,
+    customerName: context?.customerName ?? customerMatch?.[1]?.trim() ?? null,
+    serviceName: context?.serviceName ?? serviceMatch?.[1]?.trim() ?? null,
     quotedPrice: budgetMatch ? Number(budgetMatch[1]) : null,
     expectedDeliveryText: deliveryMatch?.[0] ?? null,
     expectedDeliveryDate: null,
@@ -36,7 +43,7 @@ function localExtraction(rawText: string): RecordExtraction {
     customerFeedback: null,
     scopeExceeded: null,
     isUrgent: null,
-    confirmationQuestions: ["请确认当前阶段", "请补充下一步"],
+    confirmationQuestions: [],
   };
 }
 
@@ -70,7 +77,7 @@ export async function POST(request: Request) {
   try {
     const body = recordExtractionRequestSchema.parse(await request.json());
     const apiKey = process.env.DEEPSEEK_API_KEY;
-    if (!apiKey) return NextResponse.json({ extraction: localExtraction(body.rawText), mode: "local_demo" });
+    if (!apiKey) return NextResponse.json({ extraction: localExtraction(body.rawText, body.context), mode: "local_demo" });
 
     const response = await fetch(`${process.env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com"}/chat/completions`, {
       method: "POST",
@@ -81,7 +88,7 @@ export async function POST(request: Request) {
         max_tokens: Number(process.env.AI_EXTRACTION_MAX_TOKENS ?? 6000),
         messages: [
           { role: "system", content: buildExtractionSystemPrompt() },
-          { role: "user", content: JSON.stringify({ current_date: new Date().toISOString(), source_type_hint: body.sourceType, occurred_at: body.occurredAt ?? null, raw_text: body.rawText }) },
+          { role: "user", content: JSON.stringify({ current_date: new Date().toISOString(), source_type_hint: body.sourceType, occurred_at: body.occurredAt ?? null, known_context: body.context ?? null, raw_text: body.rawText }) },
         ],
       }),
       signal: AbortSignal.timeout(Number(process.env.AI_REQUEST_TIMEOUT_MS ?? 90_000)),
