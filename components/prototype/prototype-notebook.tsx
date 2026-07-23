@@ -6,6 +6,7 @@ import {useEffect, useMemo, useState} from "react";
 import {ArrowRight, LoaderCircle} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
 import {PrototypeHeader} from "./prototype-header";
+import {MonthlyVolumeChart} from "./monthly-volume-chart";
 import {useBusinessMemory} from "@/lib/prototype/business-memory";
 import {buildBusinessObservationSnapshot, observationSourceLabels} from "@/lib/prototype/observation-context";
 import type {BusinessObservationAnalysis, BusinessObservationSnapshot} from "@/lib/domain/business-observation";
@@ -27,7 +28,7 @@ export function PrototypeNotebook() {
   const snapshot = useMemo(() => buildBusinessObservationSnapshot(model),[model]);
   const sourceLabels = useMemo(() => observationSourceLabels(snapshot),[snapshot]);
   const requestLocale = locale === "en-US" || locale === "zh-TW" ? locale : "zh-CN";
-  const signature = useMemo(() => JSON.stringify({requestLocale,services:snapshot.services}),[requestLocale,snapshot]);
+  const signature = useMemo(() => JSON.stringify({requestLocale,monthlyTransactions:snapshot.monthlyTransactions,services:snapshot.services}),[requestLocale,snapshot]);
   const [analysisResult,setAnalysisResult] = useState<{signature:string;analysis:BusinessObservationAnalysis} | null>(null);
   const [analysisState,setAnalysisState] = useState<"idle" | "loading" | "failed">("idle");
   const analysis = analysisResult?.signature === signature ? analysisResult.analysis : null;
@@ -53,8 +54,9 @@ export function PrototypeNotebook() {
     <div className="notebook-rule"><Image src="/assets/brand/bee-drop-mark.svg" alt="" width={42} height={42}/><p>{t("beeRule")}</p></div>
     {evidence.length ? <div className="notebook-entries">
       <article><p>{t("observation")}</p><h2>{t("observationTitle", {cases:cases.length, evidence:evidence.length})}</h2><span>{t("observationBody", {services:model.services.length})}</span></article>
+      {snapshot.monthlyTransactions.length ? <article className="notebook-volume"><p>{t("monthlyLabel")}</p><h2>{t("monthlyTitle")}</h2><span>{snapshot.monthlyTransactions.length < 12 ? t("monthlyEarly") : t("monthlyReady")}</span><MonthlyVolumeChart months={snapshot.monthlyTransactions} trendLabel={t("monthlyTrend")}/></article> : null}
       {analysisState === "loading" ? <article className="is-pending notebook-analyzing"><LoaderCircle/><div><p>{t("analysisLabel")}</p><h2>{t("analysisLoading")}</h2><span>{t("analysisLoadingBody")}</span></div></article> : null}
-      {analysis?.observations.map((observation,index) => <article key={`${observation.title}-${index}`}><p>{observation.kind === "pattern" ? t("pattern") : t("observation")}</p><h2>{observation.title}</h2><span>{observation.body}</span><div className="notebook-sources">{observation.sourceRefs.map((ref) => <Link key={ref} href={sourceHref(snapshot,ref)}>{sourceLabels.get(ref) ?? t("sourceFallback")}</Link>)}</div></article>)}
+      {analysis?.observations.map((observation,index) => <article key={`${observation.title}-${index}`}><p>{observation.kind === "pattern" ? t("pattern") : observation.kind === "content_move" ? t("contentMove") : t("observation")}</p><h2>{observation.title}</h2><span>{observation.body}</span><div className="notebook-sources">{observation.sourceRefs.map((ref) => <Link key={ref} href={sourceHref(snapshot,ref)}>{sourceLabels.get(ref) ?? t("sourceFallback")}</Link>)}</div></article>)}
       {analysis ? <p className="notebook-analysis-boundary">{analysis.summary}</p> : null}
       {analysisState === "failed" ? <article className="is-pending"><p>{t("analysisLabel")}</p><h2>{t("analysisFailed")}</h2><span>{t("analysisFailedBody")}</span></article> : null}
       {analysisState !== "loading" && !analysis?.observations.length ? <article className="is-pending"><p>{t("pattern")}</p><h2>{t("pendingTitle")}</h2><span>{t("pendingBody")}</span></article> : null}

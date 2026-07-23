@@ -39,7 +39,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2 text-[13px] font-medium text-[var(--muted)] outline-none transition hover:bg-white/45 hover:text-[var(--ink)] focus-visible:ring-4 focus-visible:ring-[var(--focus)]"
+        className="inline-flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-[13px] font-medium text-[var(--muted)] outline-none transition hover:bg-white/45 hover:text-[var(--ink)] focus-visible:ring-4 focus-visible:ring-[var(--focus)]"
         aria-label={t("switch")}
         aria-expanded={open}
         aria-controls={menuId}
@@ -63,7 +63,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
               aria-checked={item === locale}
               onClick={() => switchTo(item)}
               className={cn(
-                "flex min-h-8 w-full items-center rounded-lg px-2.5 text-left text-xs outline-none transition hover:bg-[#f2f5f3] focus-visible:ring-4 focus-visible:ring-[var(--focus)]",
+                "flex min-h-10 w-full items-center rounded-lg px-2.5 text-left text-xs outline-none transition hover:bg-[#f2f5f3] focus-visible:ring-4 focus-visible:ring-[var(--focus)]",
                 item === locale ? "font-semibold text-[var(--brand)]" : "text-[var(--ink)]",
               )}
             >

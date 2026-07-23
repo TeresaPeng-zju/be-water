@@ -7,8 +7,23 @@ function channelName(channel?: PrototypeServiceChannel) {
 }
 
 export function buildBusinessObservationSnapshot(model: BusinessMemoryModel): BusinessObservationSnapshot {
+  const datedCases = model.services.flatMap((service) => service.cases.map((item) => ({service,item,date:(item.occurredAt ?? item.createdAt.slice(0,10)).slice(0,7)}))).filter((entry) => /^\d{4}-\d{2}$/.test(entry.date)).sort((a,b) => a.date.localeCompare(b.date));
+  const monthlyTransactions:BusinessObservationSnapshot["monthlyTransactions"] = [];
+  if (datedCases.length) {
+    const first = new Date(`${datedCases[0].date}-01T12:00:00`);
+    const last = new Date(`${datedCases.at(-1)!.date}-01T12:00:00`);
+    const cursor = new Date(Math.max(first.getTime(),new Date(last.getFullYear(),last.getMonth() - 35,1,12).getTime()));
+    while (cursor <= last) {
+      const month = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2,"0")}`;
+      const entries = datedCases.filter((entry) => entry.date === month);
+      const countBy = (values:string[]) => [...new Set(values)].map((name) => ({name,count:values.filter((value) => value === name).length})).sort((a,b) => b.count - a.count);
+      monthlyTransactions.push({month,total:entries.length,services:countBy(entries.map((entry) => entry.service.name)),discoveryChannels:countBy(entries.map(({service,item}) => channelName(item.discoveryChannel ?? service.channels?.find((channel) => channel.id === item.discoveryChannelId))).filter((value):value is string => Boolean(value)))});
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+  }
   return {
     generatedAt:new Date().toISOString(),
+    monthlyTransactions,
     services:model.services.slice(0,40).map((service) => ({
       ref:`service:${service.id}`,
       name:service.name,

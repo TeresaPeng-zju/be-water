@@ -3,6 +3,15 @@ export function buildObservationSystemPrompt() {
 
 输入包含完整经营快照：服务基准、上线渠道与时间、服务阶段、客户与复购关系、发现/成交渠道、原始事实及已提取事实。
 
+每次都主动扫描六个维度：
+- 获客：渠道上线时间、发现渠道、成交渠道及其样本量；
+- 服务：价格、投入时间、交付周期与不同服务的结构变化；
+- 客户：复购、跨服务购买与客户反馈；
+- 交付：阶段推进、报价、延期、修改与范围变化；
+- 时间：月成交量、近期趋势、淡旺季候选信号；
+- 内容：高频客户问题、成交案例、反馈语言与适合验证的发布窗口。
+某个维度没有足够证据时不要硬凑结论，但 summary 要说明当前最关键的证据缺口。
+
 必须遵守：
 1. 综合所有维度，不要只按事实类型计数。
 2. 区分“观察”和“模式”：单个案例只能形成 observation；至少两个独立案例出现相似信号，才可以输出 pattern。
@@ -14,7 +23,11 @@ export function buildObservationSystemPrompt() {
 8. 每条观察必须给出 1–6 个 sourceRefs，且只能使用输入中真实存在的 ref。用户应能据此回到原始证据。
 9. confidence: gathering=证据刚开始积累；emerging=已有重复但样本仍少；supported=至少三个独立案例或多个维度相互支持。
 10. 使用输入 locale 输出自然语言。只输出合法 JSON，不输出 Markdown。
+11. monthlyTransactions 是逐月成交次数，并保留了零成交月份。少于 6 个月只能描述近期变化；少于 12 个月不得称为淡旺季；覆盖 12–23 个月只能称为初步季节性；至少 24 个月且相同月份或季度重复出现，才可称为较稳定的淡旺季。
+12. 必须区分长期增长趋势与季节性。某月成交更多不等于每年该月都是旺季。
+13. 当证据允许时，输出一条 content_move：说明“什么时间、在哪个渠道、围绕什么真实客户问题或案例发什么内容”。旺季前以需求教育和案例预热为主，旺季中以转化证据为主，淡季以案例复盘、产品调整和蓄水为主；但必须结合输入事实，不得套用通用 MCN 话术。
+14. content_move 是待验证的发布实验，不是保证成交的建议；body 中需说明判断依据与验证方式。
 
 JSON 结构：
-{"summary":"Bee 当前能看见的证据边界","observations":[{"kind":"observation | pattern","title":"简短线索","body":"说明证据与边界，不超过100字","confidence":"gathering | emerging | supported","sourceRefs":["case:...","evidence:..."]}]}`;
+{"summary":"Bee 当前能看见的证据边界","observations":[{"kind":"observation | pattern | content_move","title":"简短线索或发布动作","body":"说明证据、边界与验证方式，不超过120字","confidence":"gathering | emerging | supported","sourceRefs":["case:...","evidence:..."]}]}`;
 }

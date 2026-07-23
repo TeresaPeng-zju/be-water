@@ -6,6 +6,7 @@ export const businessObservationRequestSchema = z.object({
   locale: z.enum(["zh-CN","zh-TW","en-US"]),
   snapshot: z.object({
     generatedAt: z.string(),
+    monthlyTransactions: z.array(z.object({month:z.string().regex(/^\d{4}-\d{2}$/),total:z.number().int().nonnegative(),services:z.array(z.object({name:z.string(),count:z.number().int().positive()})),discoveryChannels:z.array(z.object({name:z.string(),count:z.number().int().positive()}))})).max(36),
     services: z.array(z.object({
       ref:z.string(), name:z.string(), pricingMode:z.string().nullable(), serviceListPrice:z.number().nullable(), effortMinutes:z.number().nullable(), turnaroundDays:z.number().nullable(),
       channels:z.array(sourceSchema.extend({platform:z.string(), launchedAt:z.string().nullable(), status:z.string()})),
@@ -21,7 +22,7 @@ export const businessObservationRequestSchema = z.object({
 export type BusinessObservationSnapshot = z.infer<typeof businessObservationRequestSchema>["snapshot"];
 
 export type BusinessObservation = {
-  kind: "observation" | "pattern";
+  kind: "observation" | "pattern" | "content_move";
   title: string;
   body: string;
   confidence: "gathering" | "emerging" | "supported";
