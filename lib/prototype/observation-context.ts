@@ -1,4 +1,4 @@
-import {getPrototypeEffortMinutes, getPrototypePurchaseNumber, getPrototypeStages, getPrototypeTurnaroundDays, type BusinessMemoryModel, type PrototypeServiceChannel} from "./business-memory";
+import {getPrototypeCaseStatus, getPrototypeEffortMinutes, getPrototypePurchaseNumber, getPrototypeStages, getPrototypeTurnaroundDays, type BusinessMemoryModel, type PrototypeServiceChannel} from "./business-memory";
 import type {BusinessObservationSnapshot} from "@/lib/domain/business-observation";
 
 function channelName(channel?: PrototypeServiceChannel) {
@@ -33,6 +33,7 @@ export function buildBusinessObservationSnapshot(model: BusinessMemoryModel): Bu
       turnaroundDays:getPrototypeTurnaroundDays(service) ?? null,
       channels:(service.channels ?? []).map((channel) => ({ref:`channel:${service.id}:${channel.id}`,label:channelName(channel) ?? channel.platform,platform:channel.platform,launchedAt:channel.launchedAt ?? null,status:channel.status})),
       stages:getPrototypeStages(service).map((stage) => ({ref:`stage:${service.id}:${stage.id}`,label:stage.label || stage.type,type:stage.type})),
+      assets:(service.assets ?? []).map((asset) => ({ref:`asset:${asset.id}`,label:asset.title,role:asset.role,format:asset.format,content:asset.content?.slice(0,5000) ?? null,sourceCaseRef:`case:${asset.sourceCaseId}`,sourceMaterialRef:`material:${asset.sourceMaterialId}`})),
       cases:service.cases.slice(-60).map((item) => {
         const discovery = item.discoveryChannel ?? service.channels?.find((channel) => channel.id === item.discoveryChannelId);
         const transaction = item.transactionChannel ?? service.channels?.find((channel) => channel.id === item.transactionChannelId);
@@ -42,10 +43,13 @@ export function buildBusinessObservationSnapshot(model: BusinessMemoryModel): Bu
           label:`${service.name} · ${item.customer} · ${item.occurredAt ?? item.createdAt.slice(0,10)}`,
           customerName:item.customer,
           customerRef:item.customerId || `name:${item.customer.trim().toLocaleLowerCase()}`,
+          customerIdentities:model.customers?.find((customer) => customer.id === item.customerId)?.identities.map((identity) => identity.label) ?? [item.customer],
           purchaseNumber:getPrototypePurchaseNumber(model,item),
           occurredAt:item.occurredAt ?? null,
+          status:getPrototypeCaseStatus(item),
           discoveryChannel:channelName(discovery),
           transactionChannel:channelName(transaction),
+          materials:(item.materials ?? []).map((material) => ({ref:`material:${material.id}`,label:`${item.customer} · ${material.title}`,role:material.role,format:material.format,content:material.content?.slice(0,5000) ?? null,linkedEvidenceRefs:material.linkedEvidenceIds.map((id) => `evidence:${id}`),fulfillsMaterialRefs:(material.fulfillsMaterialIds ?? []).map((id) => `material:${id}`),validatesMaterialRefs:(material.validatesMaterialIds ?? []).map((id) => `material:${id}`),serviceAssetRef:material.promotedAssetId ? `asset:${material.promotedAssetId}` : null})),
           evidence:item.evidence.slice(-100).map((evidence) => ({
             ref:`evidence:${evidence.id}`,
             label:`${item.customer} · ${stages.find((stage) => stage.id === evidence.stageId)?.label || evidence.type}`,
@@ -55,6 +59,9 @@ export function buildBusinessObservationSnapshot(model: BusinessMemoryModel): Bu
             summary:evidence.extractionSummary ?? null,
             facts:(evidence.extractedFacts ?? []).slice(0,12).map(({label,value}) => ({label,value})),
             rawText:evidence.content.slice(0,5000),
+            sourceKind:evidence.detectedSourceKind ?? null,
+            businessEvents:(evidence.businessEvents ?? []).slice(0,12),
+            outcomeClaims:(evidence.outcomeClaims ?? []).slice(0,12),
           })),
         };
       }),
@@ -68,8 +75,10 @@ export function observationSourceLabels(snapshot: BusinessObservationSnapshot) {
     labels.set(service.ref,service.name);
     service.channels.forEach((channel) => labels.set(channel.ref,`${service.name} · ${channel.label}`));
     service.stages.forEach((stage) => labels.set(stage.ref,`${service.name} · ${stage.label}`));
+    service.assets.forEach((asset) => labels.set(asset.ref,`${service.name} · ${asset.label}`));
     service.cases.forEach((item) => {
       labels.set(item.ref,item.label);
+      item.materials.forEach((material) => labels.set(material.ref,material.label));
       item.evidence.forEach((evidence) => labels.set(evidence.ref,evidence.label));
     });
   });

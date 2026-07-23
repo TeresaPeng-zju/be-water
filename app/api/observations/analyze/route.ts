@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {buildObservationSystemPrompt} from "@/lib/ai/observation-prompt";
-import {businessObservationRequestSchema, type BusinessObservationAnalysis, type BusinessObservationSnapshot} from "@/lib/domain/business-observation";
+import {buildCrossCaseRagContext} from "@/lib/ai/retrieval";
+import {businessObservationAnalysisSchema, businessObservationRequestSchema, type BusinessObservationAnalysis, type BusinessObservationSnapshot} from "@/lib/domain/business-observation";
 
 function localAnalysis(snapshot: BusinessObservationSnapshot, locale: "zh-CN" | "zh-TW" | "en-US"): BusinessObservationAnalysis {
   const cases = snapshot.services.flatMap((service) => service.cases);
@@ -29,19 +30,40 @@ function localAnalysis(snapshot: BusinessObservationSnapshot, locale: "zh-CN" | 
   return {summary:en ? `${cases.length} engagements and ${evidence.length} facts are available for comparison.` : zhTW ? `目前可比較 ${cases.length} 次服務與 ${evidence.length} 條事實。` : `目前可比较 ${cases.length} 次服务与 ${evidence.length} 条事实。`,observations};
 }
 
+function compactSnapshotForModel(snapshot:BusinessObservationSnapshot):BusinessObservationSnapshot {
+  return {
+    ...snapshot,
+    services:snapshot.services.map((service) => ({
+      ...service,
+      assets:service.assets.map((asset) => ({...asset,content:asset.content?.slice(0,2_000) ?? null})),
+      cases:service.cases.map((item) => ({
+        ...item,
+        materials:item.materials.map((material) => ({...material,content:material.content?.slice(0,2_000) ?? null})),
+        evidence:item.evidence.map((evidence) => ({...evidence,rawText:""})),
+      })),
+    })),
+  };
+}
+
 export async function POST(request:Request) {
   try {
     const body = businessObservationRequestSchema.parse(await request.json());
     const fallback = localAnalysis(body.snapshot,body.locale);
+    const retrievalContext = await buildCrossCaseRagContext(body.snapshot);
     const apiKey = process.env.DEEPSEEK_API_KEY;
-    if (!apiKey) return NextResponse.json({analysis:fallback,mode:"local_demo"});
-    const response = await fetch(`${process.env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com"}/chat/completions`,{method:"POST",headers:{Authorization:`Bearer ${apiKey}`,"Content-Type":"application/json"},body:JSON.stringify({model:process.env.DEEPSEEK_OBSERVATION_MODEL ?? process.env.DEEPSEEK_EXTRACTION_MODEL ?? "deepseek-v4-flash",response_format:{type:"json_object"},max_tokens:Number(process.env.AI_OBSERVATION_MAX_TOKENS ?? 3000),messages:[{role:"system",content:buildObservationSystemPrompt()},{role:"user",content:JSON.stringify(body)}]}),signal:AbortSignal.timeout(Number(process.env.AI_REQUEST_TIMEOUT_MS ?? 90_000))});
-    if (!response.ok) throw new Error(`DeepSeek returned ${response.status}`);
-    const payload = await response.json();
-    const parsed = JSON.parse(payload.choices?.[0]?.message?.content ?? "{}") as Partial<BusinessObservationAnalysis>;
-    const validRefs = new Set(body.snapshot.services.flatMap((service) => [service.ref,...service.channels.map((item) => item.ref),...service.stages.map((item) => item.ref),...service.cases.flatMap((item) => [item.ref,...item.evidence.map((entry) => entry.ref)])]));
-    const observations = (parsed.observations ?? []).slice(0,6).map((item) => ({...item,sourceRefs:(item.sourceRefs ?? []).filter((ref) => validRefs.has(ref)).slice(0,6)})).filter((item) => item.title && item.body && item.sourceRefs.length);
-    return NextResponse.json({analysis:{summary:parsed.summary || fallback.summary,observations:observations.length ? observations : fallback.observations},mode:"deepseek",usage:payload.usage});
+    if (!apiKey) return NextResponse.json({analysis:fallback,mode:"local_demo",retrieval:{strategy:retrievalContext.strategy,matches:retrievalContext.matches.length}});
+    try {
+      const response = await fetch(`${process.env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com"}/chat/completions`,{method:"POST",headers:{Authorization:`Bearer ${apiKey}`,"Content-Type":"application/json"},body:JSON.stringify({model:process.env.DEEPSEEK_OBSERVATION_MODEL ?? process.env.DEEPSEEK_EXTRACTION_MODEL ?? "deepseek-v4-flash",response_format:{type:"json_object"},max_tokens:Number(process.env.AI_OBSERVATION_MAX_TOKENS ?? 3000),messages:[{role:"system",content:buildObservationSystemPrompt()},{role:"user",content:JSON.stringify({locale:body.locale,snapshot:compactSnapshotForModel(body.snapshot),retrievalContext})}]}),signal:AbortSignal.timeout(Number(process.env.AI_REQUEST_TIMEOUT_MS ?? 90_000))});
+      if (!response.ok) throw new Error(`DeepSeek returned ${response.status}`);
+      const payload = await response.json();
+      const parsed = businessObservationAnalysisSchema.parse(JSON.parse(payload.choices?.[0]?.message?.content ?? "{}"));
+      const validRefs = new Set(body.snapshot.services.flatMap((service) => [service.ref,...service.channels.map((item) => item.ref),...service.stages.map((item) => item.ref),...service.assets.map((item) => item.ref),...service.cases.flatMap((item) => [item.ref,...item.materials.map((entry) => entry.ref),...item.evidence.map((entry) => entry.ref)])]));
+      const observations = parsed.observations.map((item) => ({...item,sourceRefs:item.sourceRefs.filter((ref) => validRefs.has(ref)).slice(0,6)})).filter((item) => item.sourceRefs.length);
+      return NextResponse.json({analysis:{summary:parsed.summary,observations:observations.length ? observations : fallback.observations},mode:"deepseek",usage:payload.usage,retrieval:{strategy:retrievalContext.strategy,matches:retrievalContext.matches.length}});
+    } catch (providerError) {
+      console.warn("DeepSeek observation analysis fell back to local mode",providerError);
+      return NextResponse.json({analysis:fallback,mode:"local_fallback",retrieval:{strategy:retrievalContext.strategy,matches:retrievalContext.matches.length}});
+    }
   } catch (error) {
     console.error("Business observation failed",error);
     return NextResponse.json({error:"Bee 暂时无法整理这些经营线索。"},{status:500});

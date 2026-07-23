@@ -1,4 +1,17 @@
 import { z } from "zod";
+import type {
+  BusinessEvent,
+  IdentityCandidate,
+  OutcomeClaim,
+  RawSourceKind,
+} from "./business-event";
+import {
+  commercialStatuses,
+  deliveryStatuses,
+  outcomeStatuses,
+  paymentStatuses,
+  type CaseStatusProposal,
+} from "./delivery";
 
 export const recordSourceTypes = [
   "auto",
@@ -24,6 +37,16 @@ export const recordExtractionRequestSchema = z.object({
     transactionConfirmed: z.boolean().optional(),
     serviceListPrice: z.number().nonnegative().nullable().optional(),
     purchaseNumber: z.number().int().positive().nullable().optional(),
+    customerId: z.string().trim().max(160).nullable().optional(),
+    caseStatus: z.object({
+      commercial:z.enum(commercialStatuses),
+      delivery:z.enum(deliveryStatuses),
+      payment:z.enum(paymentStatuses),
+      outcome:z.enum(outcomeStatuses),
+    }).nullable().optional(),
+    stageOrigin: z.enum(["preset", "custom"]).nullable().optional(),
+    knownCustomerIdentities: z.array(z.string().trim().max(160)).max(30).optional(),
+    providerIdentities: z.array(z.string().trim().max(160)).max(30).optional(),
   }).optional(),
 });
 
@@ -40,6 +63,9 @@ export type ExtractedFact = {
 
 export type RecordExtraction = {
   recordType: string;
+  detectedSourceKind: RawSourceKind;
+  sourceKindConfidence: number;
+  sourceHintConflict: boolean;
   summary: string;
   participants: Array<{ temporaryName: string; role: "customer" | "user" | "unknown" }>;
   facts: ExtractedFact[];
@@ -60,4 +86,8 @@ export type RecordExtraction = {
   scopeExceeded: boolean | null;
   isUrgent: boolean | null;
   confirmationQuestions: string[];
+  identityCandidates: IdentityCandidate[];
+  businessEvents: BusinessEvent[];
+  outcomeClaims: OutcomeClaim[];
+  caseStatusProposals: CaseStatusProposal[];
 };

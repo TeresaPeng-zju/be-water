@@ -1,14 +1,13 @@
 "use client";
 
 import {useState} from "react";
-import {Check, GripVertical, Plus, Trash2, X} from "lucide-react";
-import {isPresetStage, type EvidenceType, type PrototypeStage} from "@/lib/prototype/business-memory";
+import {GripVertical, Plus, Trash2, X} from "lucide-react";
+import {isPresetStage, type PrototypeStage} from "@/lib/prototype/business-memory";
 
 type StageBuilderProps = {
   stages: PrototypeStage[];
   onChange: (stages: PrototypeStage[]) => void;
   getLabel: (stage: PrototypeStage) => string;
-  getTypeLabel: (type: EvidenceType) => string;
   addLabel: string;
   addTypeLabel: string;
   addNameLabel: string;
@@ -19,12 +18,9 @@ type StageBuilderProps = {
   description: string;
 };
 
-const stageTypes: EvidenceType[] = ["conversation", "quote", "delivery", "feedback", "note"];
-
-export function StageBuilder({stages, onChange, getLabel, getTypeLabel, addLabel, addTypeLabel, addNameLabel, addConfirmLabel, addCancelLabel, presetLabel, customPlaceholder, description}: StageBuilderProps) {
+export function StageBuilder({stages, onChange, getLabel, addLabel, addTypeLabel, addNameLabel, addConfirmLabel, addCancelLabel, presetLabel, customPlaceholder, description}: StageBuilderProps) {
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
-  const [newType, setNewType] = useState<EvidenceType | "">("");
   const [newLabel, setNewLabel] = useState("");
 
   function updateLabel(stageId: string, label: string) {
@@ -33,13 +29,12 @@ export function StageBuilder({stages, onChange, getLabel, getTypeLabel, addLabel
 
   function cancelAdd() {
     setAdding(false);
-    setNewType("");
     setNewLabel("");
   }
 
   function addStage() {
-    if (!newType || !newLabel.trim()) return;
-    onChange([...stages, {id: `custom-stage-${crypto.randomUUID()}`, type: newType, label: newLabel.trim(), origin: "custom"}]);
+    if (!newLabel.trim()) return;
+    onChange([...stages, {id: `custom-stage-${crypto.randomUUID()}`, type: "note", label: newLabel.trim(), origin: "custom"}]);
     cancelAdd();
   }
 
@@ -78,14 +73,14 @@ export function StageBuilder({stages, onChange, getLabel, getTypeLabel, addLabel
           onChange={(event) => updateLabel(stage.id, event.target.value)}
           placeholder={customPlaceholder}
           aria-label={`${index + 1}. ${getLabel(stage) || customPlaceholder}`}
-        /><small>{getTypeLabel(stage.type)}</small></div>}
+        /><small>{addTypeLabel}</small></div>}
         <button type="button" onClick={() => removeStage(stage.id)} disabled={stages.length <= 1} aria-label={`${getLabel(stage)} · ${customPlaceholder}`}><Trash2/></button>
       </div>)}
     </div>
     {!adding ? <button type="button" className="stage-builder-add" onClick={() => setAdding(true)}><Plus/>{addLabel}</button> : <div className="stage-builder-create">
-      <div><span>{addTypeLabel}</span><div className="stage-type-options">{stageTypes.map((type) => <button type="button" key={type} className={newType === type ? "is-selected" : ""} onClick={() => setNewType(type)}>{newType === type ? <Check/> : null}{getTypeLabel(type)}</button>)}</div></div>
+      <p className="stage-builder-auto-type">{addTypeLabel}</p>
       <label><span>{addNameLabel}</span><input autoFocus value={newLabel} onChange={(event) => setNewLabel(event.target.value)} placeholder={customPlaceholder}/></label>
-      <div className="stage-builder-create-actions"><button type="button" onClick={cancelAdd}><X/>{addCancelLabel}</button><button type="button" className="is-primary" disabled={!newType || !newLabel.trim()} onClick={addStage}><Plus/>{addConfirmLabel}</button></div>
+      <div className="stage-builder-create-actions"><button type="button" onClick={cancelAdd}><X/>{addCancelLabel}</button><button type="button" className="is-primary" disabled={!newLabel.trim()} onClick={addStage}><Plus/>{addConfirmLabel}</button></div>
     </div>}
   </div>;
 }

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import {useState} from "react";
-import {ArrowLeft, ArrowRight, Check, Pencil, Plus, Trash2} from "lucide-react";
+import {ArrowLeft, ArrowRight, Check, Library, Pencil, Plus, Trash2} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
 import {PrototypeHeader} from "./prototype-header";
+import {NotebookEntry} from "./notebook-entry";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {StageBuilder} from "./stage-builder";
 import {ServiceChannelEditor} from "./service-channel-editor";
@@ -17,6 +18,9 @@ export function PrototypeServiceDetail({serviceId}: {serviceId: string}) {
   const stageT = useTranslations("stageBuilder");
   const customerT = useTranslations("customerLinking");
   const channelT = useTranslations("channels");
+  const notebookT = useTranslations("notebookEntry");
+  const assetT = useTranslations("serviceAssets");
+  const deliveryT = useTranslations("deliveryWorkspace");
   const locale = useLocale();
   const model = useBusinessMemory();
   const service = model.services.find((item) => item.id === serviceId);
@@ -88,6 +92,7 @@ export function PrototypeServiceDetail({serviceId}: {serviceId: string}) {
   }
 
   if (!service) return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell"><div className="prototype-empty"><h1>{t("notFound")}</h1><Link className="prototype-text-action" href="/services">{t("back")}<ArrowRight className="size-4"/></Link></div></section></main>;
+  const serviceEvidenceCount = service.cases.reduce((count,item) => count + item.evidence.length,0);
 
   return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell">
     <Link href="/services" className="prototype-back"><ArrowLeft className="size-4"/>{t("back")}</Link>
@@ -103,11 +108,16 @@ export function PrototypeServiceDetail({serviceId}: {serviceId: string}) {
     <section className="service-channel-section"><div><p className="prototype-eyebrow">{channelT("sectionEyebrow")}</p><h2>{channelT("sectionTitle")}</h2><span>{channelT("sectionDescription")}</span></div>{!editingChannels ? <>{service.channels?.length ? <div className="service-channel-list">{service.channels.map((channel) => <article key={channel.id}><strong>{channelLabel(channel)}</strong><span>{channel.launchedAt ? new Intl.DateTimeFormat(locale === "en" ? "en-US" : locale,{year:"numeric",month:"short",day:"numeric"}).format(new Date(`${channel.launchedAt}T12:00:00`)) : "—"}</span><small>{channelT(`statuses.${channel.status}`)}</small></article>)}</div> : <p className="service-channel-empty">{channelT("empty")}</p>}<button className="prototype-text-action" onClick={beginChannelEdit}><Pencil/>{channelT("edit")}</button></> : <div className="service-channel-edit"><ServiceChannelEditor channels={draftChannels} onChange={setDraftChannels}/><div><button className="prototype-quiet" onClick={() => setEditingChannels(false)}>{channelT("cancel")}</button><button className="prototype-primary" onClick={saveChannels}>{channelT("save")}</button></div></div>}</section>
     <section className="service-stage-template">
       <div><p className="prototype-eyebrow">{t("stages.eyebrow")}</p><h2>{t("stages.title")}</h2><span>{t("stages.description")}</span></div>
-      {!editingStages ? <><ol>{getPrototypeStages(service).map((stage, index) => <li key={stage.id}><span>{String(index + 1).padStart(2,"0")}</span><strong>{stage.label || caseT(`types.${stage.type}`)}</strong>{index < getPrototypeStages(service).length - 1 ? <ArrowRight/> : null}</li>)}</ol><button className="prototype-text-action" onClick={beginStageEdit}><Pencil/>{t("stages.edit")}</button></> : <div className="service-stage-editor"><StageBuilder stages={draftStages} onChange={setDraftStages} getLabel={(stage) => stage.label || caseT(`types.${stage.type}`)} getTypeLabel={(type) => stageT(`types.${type}`)} addLabel={stageT("add")} addTypeLabel={stageT("typeLabel")} addNameLabel={stageT("nameLabel")} addConfirmLabel={stageT("confirmAdd")} addCancelLabel={stageT("cancelAdd")} presetLabel={stageT("presetLabel")} customPlaceholder={stageT("customPlaceholder")} description={t("stages.editorHint")}/><div><button className="prototype-quiet" onClick={() => setEditingStages(false)}>{t("cancel")}</button><button className="prototype-primary" onClick={saveStages} disabled={!draftStages.length || draftStages.some((stage) => !isPresetStage(stage) && !stage.label?.trim())}><Check/>{t("stages.save")}</button></div></div>}
+      {!editingStages ? <><ol>{getPrototypeStages(service).map((stage, index) => <li key={stage.id}><span>{String(index + 1).padStart(2,"0")}</span><strong>{stage.label || caseT(`types.${stage.type}`)}</strong>{index < getPrototypeStages(service).length - 1 ? <ArrowRight/> : null}</li>)}</ol><button className="prototype-text-action" onClick={beginStageEdit}><Pencil/>{t("stages.edit")}</button></> : <div className="service-stage-editor"><StageBuilder stages={draftStages} onChange={setDraftStages} getLabel={(stage) => stage.label || caseT(`types.${stage.type}`)} addLabel={stageT("add")} addTypeLabel={stageT("typeLabel")} addNameLabel={stageT("nameLabel")} addConfirmLabel={stageT("confirmAdd")} addCancelLabel={stageT("cancelAdd")} presetLabel={stageT("presetLabel")} customPlaceholder={stageT("customPlaceholder")} description={t("stages.editorHint")}/><div><button className="prototype-quiet" onClick={() => setEditingStages(false)}>{t("cancel")}</button><button className="prototype-primary" onClick={saveStages} disabled={!draftStages.length || draftStages.some((stage) => !isPresetStage(stage) && !stage.label?.trim())}><Check/>{t("stages.save")}</button></div></div>}
     </section>
+    {service.assets?.length ? <section className="service-asset-library">
+      <div><p className="prototype-eyebrow">{assetT("eyebrow")}</p><h2>{assetT("title")}</h2><span>{assetT("description")}</span></div>
+      <div>{service.assets.map((asset) => <article key={asset.id}><Library/><div><span>{deliveryT(`roles.${asset.role}`)}</span><h3>{asset.title}</h3><p>{asset.content?.slice(0,100) || asset.fileName || asset.externalUrl}</p></div><small>{assetT("usage",{count:asset.usageCount})}</small></article>)}</div>
+    </section> : null}
     {service.cases.length ? <div className="prototype-list">{service.cases.map((item, index) => {const purchaseNumber = getPrototypePurchaseNumber(model, item); return <article key={item.id} className="prototype-row case-row">
       <Link className="case-row-hit" href={`/services/${service.id}/cases/${item.id}`} aria-label={item.customer}/><span className="prototype-index">{String(index + 1).padStart(2,"0")}</span><div><h2>{item.customer}{purchaseNumber > 1 ? <small className="repeat-purchase-tag">{customerT("repeatShort", {number:purchaseNumber})}</small> : null}</h2><p>{item.occurredAt ? new Intl.DateTimeFormat(locale === "en" ? "en-US" : locale,{year:"numeric",month:"long",day:"numeric"}).format(new Date(`${item.occurredAt}T12:00:00`)) : item.summary || t("legacyCase")}</p></div><div className="prototype-meta"><span>{item.evidence.length ? t("caseHasFacts") : t("caseWaiting")}</span></div><button type="button" className="case-row-delete" aria-label={t("deleteCaseLabel",{name:item.customer})} onClick={() => setPendingDeleteCase(item)}><Trash2/></button><ArrowRight className="size-4"/>
-    </article>;})}</div> : <div className="prototype-empty"><p>{t("emptyEyebrow")}</p><h2>{t("emptyTitle")}</h2><span>{t("emptyDescription")}</span><button className="prototype-text-action" onClick={() => setOpen(true)}>{t("emptyAction")}<ArrowRight className="size-4"/></button></div>}
+    </article>;})}</div> : null}
+    <NotebookEntry href={`/notebook?service=${service.id}#context`} eyebrow={notebookT("eyebrow")} title={notebookT("serviceTitle",{service:service.name})} description={service.cases.length ? notebookT("serviceBody",{cases:service.cases.length,evidence:serviceEvidenceCount}) : notebookT("serviceEmpty")} action={notebookT("action")}/>
     <ConfirmDialog open={Boolean(pendingDeleteCase)} title={t("deleteCaseTitle")} description={t("deleteCaseDescription",{name:pendingDeleteCase?.customer ?? ""})} cancelLabel={t("deleteCaseCancel")} confirmLabel={t("deleteCaseConfirm")} onCancel={() => setPendingDeleteCase(null)} onConfirm={confirmDeleteCase}/>
   </section></main>;
 }

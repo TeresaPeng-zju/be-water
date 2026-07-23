@@ -101,7 +101,7 @@ export function PrototypeServices() {
   return <main className="prototype-canvas min-h-dvh">
     <PrototypeHeader/>
     <section className="prototype-shell">
-      <div className="prototype-page-head">
+      <div className="prototype-page-head services-page-head">
         <div><h1>{t("title")}</h1><span>{t("description")}</span></div>
         {model.services.length ? <button className="prototype-primary" onClick={() => setOpen(true)}><Plus className="size-4"/>{t("add")}</button> : null}
       </div>
@@ -132,7 +132,7 @@ export function PrototypeServices() {
             </div>
           </div> : null}
           {step === 5 ? <ServiceChannelEditor channels={channels} onChange={setChannels}/> : null}
-          {step === 6 ? <StageBuilder stages={stages} onChange={setStages} getLabel={(stage) => stage.label || caseT(`types.${stage.type}`)} getTypeLabel={(type) => stageT(`types.${type}`)} addLabel={stageT("add")} addTypeLabel={stageT("typeLabel")} addNameLabel={stageT("nameLabel")} addConfirmLabel={stageT("confirmAdd")} addCancelLabel={stageT("cancelAdd")} presetLabel={stageT("presetLabel")} customPlaceholder={stageT("customPlaceholder")} description={t("stages.description")}/> : null}
+          {step === 6 ? <StageBuilder stages={stages} onChange={setStages} getLabel={(stage) => stage.label || caseT(`types.${stage.type}`)} addLabel={stageT("add")} addTypeLabel={stageT("typeLabel")} addNameLabel={stageT("nameLabel")} addConfirmLabel={stageT("confirmAdd")} addCancelLabel={stageT("cancelAdd")} presetLabel={stageT("presetLabel")} customPlaceholder={stageT("customPlaceholder")} description={t("stages.description")}/> : null}
         </div>
         <div className="conversation-footer"><div>{[0,1,2,3,4,5,6].map((item) => <i key={item} className={item <= step ? "is-active" : ""}/>)}</div><button className="prototype-quiet" onClick={resetFlow}>{t("cancel")}</button>{step > 0 ? <button className="prototype-quiet" onClick={() => setStep((current) => current - 1)}>{t("previous")}</button> : null}<button className="prototype-primary" disabled={!answers[step]} onClick={next}>{step === 6 ? t("save") : t("continue")}</button></div>
       </section> : null}

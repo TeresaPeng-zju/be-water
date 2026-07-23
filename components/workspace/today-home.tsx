@@ -63,7 +63,7 @@ export function TodayHome() {
             <div className="relative z-10">
               <div className="memory-state">
                 <span>{evidence.length ? t(patterns ? "memory.patternState" : "memory.observationState") : t("memory.emptyState")}</span>
-                {evidence.length ? <strong>{t(patterns ? "memory.patternDescription" : "memory.observationDescription", {evidence: evidence.length, patterns})}</strong> : <div className="memory-sources"><p className="memory-source-intro"><span className="memory-bee" aria-hidden="true"><Image src="/assets/brand/bee-memory.png" alt="" width={24} height={24}/></span><span>{t("memory.sourceIntro")}</span></p><div>{(["service", "case", "feedback"] as const).map((item) => <span key={item}>{t(`memory.sources.${item}`)}</span>)}</div></div>}
+                {evidence.length ? <p className="memory-observation-copy"><span className="memory-bee" aria-hidden="true"><Image src="/assets/brand/bee-memory.png" alt="" width={24} height={24}/></span><strong>{t(patterns ? "memory.patternDescription" : "memory.observationDescription", {evidence: evidence.length, patterns})}</strong></p> : <div className="memory-sources"><p className="memory-source-intro"><span className="memory-bee" aria-hidden="true"><Image src="/assets/brand/bee-memory.png" alt="" width={24} height={24}/></span><span>{t("memory.sourceIntro")}</span></p><div>{(["service", "case", "feedback"] as const).map((item) => <span key={item}>{t(`memory.sources.${item}`)}</span>)}</div></div>}
                 {evidence.length ? <Link href="/notebook">{t("memory.openNotebook")}<ArrowRight className="size-4"/></Link> : null}
               </div>
               <div className="memory-counts">
