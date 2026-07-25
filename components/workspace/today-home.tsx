@@ -11,14 +11,15 @@ import {SpotlightCard} from "@/components/ui/spotlight-card";
 const growthLoop = [
   {index: "01", key: "records"},
   {index: "02", key: "understanding"},
-  {index: "03", key: "actions"},
-  {index: "04", key: "results"},
-  {index: "05", key: "refine"}
+  {index: "03", key: "value"},
+  {index: "04", key: "action"},
+  {index: "05", key: "return"}
 ] as const;
 
 export function TodayHome() {
   const t = useTranslations("home");
   const locale = useLocale();
+  const heroSplitType = locale === "en" ? "words" : "chars";
 
   return (
     <main className={`brand-home min-h-dvh overflow-hidden ${locale === "en" ? "is-english" : "is-chinese"}`}>
@@ -36,9 +37,9 @@ export function TodayHome() {
           <div className="brand-hero-copy">
             <p className="brand-eyebrow">{t("hero.eyebrow")}</p>
             <h1 className="brand-hero-title">
-              <SplitText tag="span" text={t("hero.titleLine1")} className="brand-hero-line" delay={34} duration={0.9} rootMargin="0px"/>
+              <SplitText tag="span" text={t("hero.titleLine1")} className="brand-hero-line" delay={locale === "en" ? 58 : 34} duration={0.9} splitType={heroSplitType} rootMargin="0px"/>
               <br/>
-              <SplitText tag="span" text={t("hero.titleLine2")} className="brand-hero-line brand-hero-accent" delay={34} startDelay={0.16} duration={0.9} rootMargin="0px"/>
+              <SplitText tag="span" text={t("hero.titleLine2")} className="brand-hero-line brand-hero-accent" delay={locale === "en" ? 58 : 34} startDelay={0.16} duration={0.9} splitType={heroSplitType} rootMargin="0px"/>
             </h1>
             <p className="brand-method">{t("hero.method")}</p>
             <div className="brand-hero-actions">
@@ -61,16 +62,25 @@ export function TodayHome() {
               <h2>{t("insight.sampleTitle")}</h2>
               <div className="sample-insight-evidence">
                 <span>{t("insight.evidenceLabel")}</span>
-                <ul>
-                  <li>{t("insight.evidence.delivery")}</li>
-                  <li>{t("insight.evidence.feedback")}</li>
-                </ul>
+                <div className="sample-insight-quotes">
+                  <blockquote>
+                    <p>{t("insight.evidence.inquiry.quote")}</p>
+                    <cite>{t("insight.evidence.inquiry.source")}</cite>
+                  </blockquote>
+                  <blockquote>
+                    <p>{t("insight.evidence.feedback.quote")}</p>
+                    <cite>{t("insight.evidence.feedback.source")}</cite>
+                  </blockquote>
+                </div>
               </div>
-              <div className="sample-insight-opportunity">
-                <span>{t("insight.opportunityLabel")}</span>
-                <p>{t("insight.opportunity")}</p>
+              <div className="sample-insight-row sample-insight-judgment">
+                <span>{t("insight.judgmentLabel")}</span>
+                <p>{t("insight.judgment")}</p>
               </div>
-              <p className="sample-insight-note">{t("insight.sampleNote")}</p>
+              <div className="sample-insight-row sample-insight-action">
+                <span>{t("insight.actionLabel")}</span>
+                <p>{t("insight.action")}</p>
+              </div>
             </div>
           </aside>
         </div>

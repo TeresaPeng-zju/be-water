@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "BeWater · 让真实经营指导下一次增长",
-  description: "把真实咨询、交付与客户反馈，变成下一步可执行的获客行动。",
+  description: "从真实咨询、交付与客户反馈中学习，让每一次经营指导下一次增长。",
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

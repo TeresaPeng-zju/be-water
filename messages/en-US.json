@@ -19,18 +19,25 @@
     "hero": {
       "eyebrow": "A GROWTH AGENT GROUNDED IN REAL WORK",
       "titleLine1": "Let every real client engagement",
-      "titleLine2": "guide you to the next customer.",
+      "titleLine2": "guide your next growth move.",
       "description": "Bee will remember it for you.",
-      "method": "Bee learns how your business works from client conversations, delivery, and feedback—then turns recurring signals into the content and follow-ups worth doing this week.",
-      "primaryAction": "Let Bee learn my business",
-      "traceability": "Every insight links back to its source record."
+      "method": "Bee learns from client conversations, delivery, and feedback—then turns recurring signals into content and follow-up directions worth testing next.",
+      "primaryAction": "Let Bee start learning",
+      "traceability": "Every judgment Bee forms from real work links back to its source record."
     },
     "insight": {
-      "sampleLabel": "SAMPLE INSIGHT",
+      "sampleLabel": "EXAMPLE · HOW BEE FORMS A JUDGMENT",
       "todayLabel": "TODAY'S INSIGHT",
       "sampleTitle": "“Project deep-dives” keep coming up.",
       "evidenceLabel": "EVIDENCE",
-      "evidence": {"delivery": "2 mock interview sessions", "feedback": "2 client feedback records"},
+      "evidence": {
+        "inquiry": {"quote": "“When interviewers dig into project details, I do not know how to answer.”", "source": "CLIENT INQUIRY"},
+        "feedback": {"quote": "“I finally know how to explain my project experience.”", "source": "CLIENT FEEDBACK"}
+      },
+      "judgmentLabel": "BEE'S READ",
+      "judgment": "The difficulty before delivery and the value felt afterward point to the same need: project storytelling.",
+      "actionLabel": "GROWTH ACTION",
+      "action": "Position “Mock Interview” as a “Project Storytelling Diagnostic” and test the new service description this week.",
       "opportunityLabel": "GROWTH OPPORTUNITY",
       "opportunity": "Reframe “Mock Interview” as a “Project Storytelling Diagnostic.”",
       "realTitle": "Your real work is beginning to leave a trace.",
@@ -43,9 +50,9 @@
     "memory": {"eyebrow": "BUSINESS MEMORY", "title": "Your experience stays here", "observation": "Observations", "pattern": "Patterns", "principle": "Principles", "unit": "", "emptyState": "Your first signal is waiting...", "sourceIntro": "Bee will slowly notice:", "sources": {"service": "Services", "case": "Cases", "feedback": "Customer feedback"}, "emptyDescription": "Leave the facts first. Observations will emerge on their own.", "emptyAction": "Record a case", "observationState": "Bee is organizing the facts you left", "observationDescription": "{evidence} facts are now part of your business memory. Repeated signals will emerge as real experience grows.", "patternState": "Some signals are beginning to repeat", "patternDescription": "Bee has found {patterns, plural, one {one repeating signal} other {# repeating signals}} in your real records.", "openNotebook": "See Bee's observations"},
     "loop": {
       "eyebrow": "A CONTINUOUS GROWTH LOOP",
-      "title": "Bee does not stop at a one-off answer.",
-      "description": "Every result feeds the next decision.",
-      "steps": {"records": "Real records", "understanding": "Business understanding", "actions": "Weekly actions", "results": "Results", "refine": "Refine and repeat"}
+      "title": "Bee keeps learning from results.",
+      "description": "The results you record become evidence for the next judgment.",
+      "steps": {"records": "Real records", "understanding": "Business understanding", "value": "Recurring value", "action": "Growth action", "return": "Results return"}
     },
     "workspace": {
       "eyebrow": "YOUR WORKSPACE",

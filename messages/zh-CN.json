@@ -18,19 +18,26 @@
     "headerPrimaryUser": "回到今日行动",
     "hero": {
       "eyebrow": "真实经营驱动的增长 Agent",
-      "titleLine1": "让每一次真实经营，",
-      "titleLine2": "指导下一次获客。",
+      "titleLine1": "让每一次真实经营",
+      "titleLine2": "指导下一次增长。",
       "description": "Bee 会替你记住。",
-      "method": "Bee 从咨询、交付和客户反馈中理解你的生意，把反复出现的线索变成本周最值得做的内容与跟进。",
-      "primaryAction": "让 Bee 看看我的经营",
-      "traceability": "每项判断都可以回到原始记录。"
+      "method": "Bee 从咨询、交付和客户反馈中学习你的生意，把反复出现的线索变成下一步值得验证的内容与跟进方向。",
+      "primaryAction": "让 Bee 开始学习",
+      "traceability": "Bee 基于真实经营形成的每项判断，都能回到原始记录。"
     },
     "insight": {
-      "sampleLabel": "示例洞察",
+      "sampleLabel": "示例 · Bee 如何形成判断",
       "todayLabel": "今日洞察",
       "sampleTitle": "“项目深挖”正在反复出现。",
       "evidenceLabel": "依据",
-      "evidence": {"delivery": "2 次模拟面试交付", "feedback": "2 条客户反馈"},
+      "evidence": {
+        "inquiry": {"quote": "“一被追问项目细节，我就不知道怎么讲。”", "source": "咨询记录"},
+        "feedback": {"quote": "“终于知道项目经历该怎么表达了。”", "source": "客户反馈"}
+      },
+      "judgmentLabel": "Bee 的归纳",
+      "judgment": "咨询中的困难与交付后的收获，都指向同一件事：客户真正需要的是项目表达。",
+      "actionLabel": "增长行动",
+      "action": "将「模拟面试」表达为「项目表达诊断」，本周测试新的服务介绍。",
       "opportunityLabel": "增长机会",
       "opportunity": "将「模拟面试」表达为「项目表达诊断」。",
       "realTitle": "真实工作正在留下线索。",
@@ -43,9 +50,9 @@
     "memory": {"eyebrow": "经营记忆", "title": "经验会在这里留下来", "observation": "观察", "pattern": "模式", "principle": "原则", "unit": "条", "emptyState": "第一条线索，\n正在等你留下...", "sourceIntro": "Bee 会慢慢发现：", "sources": {"service": "服务", "case": "案例", "feedback": "客户反馈"}, "emptyDescription": "先留下事实。观察会自己出现。", "emptyAction": "记录我的案例", "observationState": "Bee 正在整理你留下的事实", "observationDescription": "已有 {evidence} 条事实进入经营记忆。再多一些真实经历，重复出现的线索就会浮现。", "patternState": "有些线索正在反复出现", "patternDescription": "Bee 已从真实记录中发现 {patterns} 个重复信号。", "openNotebook": "查看 Bee 的观察"},
     "loop": {
       "eyebrow": "持续增长闭环",
-      "title": "Bee 不只生成一次答案。",
-      "description": "每次执行结果都会回到下一轮判断。",
-      "steps": {"records": "真实材料", "understanding": "经营理解", "actions": "本周行动", "results": "执行结果", "refine": "下一轮调整"}
+      "title": "Bee 会从结果中继续学习。",
+      "description": "你留下的执行结果，会成为下一轮判断的证据。",
+      "steps": {"records": "真实材料", "understanding": "经营理解", "value": "重复价值", "action": "增长行动", "return": "结果回流"}
     },
     "workspace": {
       "eyebrow": "你的工作区",
