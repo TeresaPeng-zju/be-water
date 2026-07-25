@@ -17,36 +17,35 @@
     "headerPrimaryGuest": "开始商业诊断",
     "headerPrimaryUser": "回到今日行动",
     "hero": {
-      "eyebrow": "你的经营记忆",
-      "titleLine1": "真正值钱的，\n不是一次服务。",
-      "titleLine2": "而是它留下来的\n经验。",
+      "eyebrow": "真实经营驱动的增长 Agent",
+      "titleLine1": "让每一次真实经营，",
+      "titleLine2": "指导下一次获客。",
       "description": "Bee 会替你记住。",
-      "method": "记录真实经营，让反复出现的线索慢慢成为属于你的方法。",
-      "primaryAction": "探索我的源泉"
+      "method": "Bee 从咨询、交付和客户反馈中理解你的生意，把反复出现的线索变成本周最值得做的内容与跟进。",
+      "primaryAction": "让 Bee 看看我的经营",
+      "traceability": "每项判断都可以回到原始记录。"
     },
     "insight": {
       "sampleLabel": "示例洞察",
       "todayLabel": "今日洞察",
-      "sampleTitle": "Bee 会基于你的服务、案例与真实记录形成判断。",
+      "sampleTitle": "“项目深挖”正在反复出现。",
+      "evidenceLabel": "依据",
+      "evidence": {"delivery": "2 次模拟面试交付", "feedback": "2 条客户反馈"},
+      "opportunityLabel": "增长机会",
+      "opportunity": "将「模拟面试」表达为「项目表达诊断」。",
       "realTitle": "真实工作正在留下线索。",
       "realEmphasis": "继续行动，判断会变得更清晰。",
-      "sampleNote": "完成首次诊断后生成",
+      "sampleNote": "留下真实记录后，Bee 会形成属于你的判断。",
       "todayAction": "查看今日行动",
       "metrics": {"positioning": "定位清晰度", "expression": "价值表达力", "attraction": "客户吸引力", "growth": "持续增长力"}
     },
     "flow": {"label": "流动", "sample": "待生成", "caption": "当前成长势能"},
     "memory": {"eyebrow": "经营记忆", "title": "经验会在这里留下来", "observation": "观察", "pattern": "模式", "principle": "原则", "unit": "条", "emptyState": "第一条线索，\n正在等你留下...", "sourceIntro": "Bee 会慢慢发现：", "sources": {"service": "服务", "case": "案例", "feedback": "客户反馈"}, "emptyDescription": "先留下事实。观察会自己出现。", "emptyAction": "记录我的案例", "observationState": "Bee 正在整理你留下的事实", "observationDescription": "已有 {evidence} 条事实进入经营记忆。再多一些真实经历，重复出现的线索就会浮现。", "patternState": "有些线索正在反复出现", "patternDescription": "Bee 已从真实记录中发现 {patterns} 个重复信号。", "openNotebook": "查看 Bee 的观察"},
     "loop": {
-      "eyebrow": "经营资产",
-      "title": "真实经营，如何慢慢成为方法",
-      "description": "先留下发生过的事，再让重复出现的线索自己浮现。",
-      "steps": {
-        "service": {"title": "服务", "description": "定义你提供的价值。"},
-        "case": {"title": "案例", "description": "记录一次真实经营。"},
-        "observation": {"title": "观察", "description": "发现反复出现的线索。"},
-        "principle": {"title": "原则", "description": "沉淀属于你的方法。"}
-      },
-      "openReflection": "进入回望"
+      "eyebrow": "持续增长闭环",
+      "title": "Bee 不只生成一次答案。",
+      "description": "每次执行结果都会回到下一轮判断。",
+      "steps": {"records": "真实材料", "understanding": "经营理解", "actions": "本周行动", "results": "执行结果", "refine": "下一轮调整"}
     },
     "workspace": {
       "eyebrow": "你的工作区",

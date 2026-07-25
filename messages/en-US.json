@@ -17,36 +17,35 @@
     "headerPrimaryGuest": "Begin your diagnosis",
     "headerPrimaryUser": "Return to today's actions",
     "hero": {
-      "eyebrow": "YOUR BUSINESS MEMORY",
-      "titleLine1": "What matters is not a single service.",
-      "titleLine2": "It is the experience it leaves behind.",
+      "eyebrow": "A GROWTH AGENT GROUNDED IN REAL WORK",
+      "titleLine1": "Let every real client engagement",
+      "titleLine2": "guide you to the next customer.",
       "description": "Bee will remember it for you.",
-      "method": "Keep the facts of real work. Let repeated signals become a method of your own.",
-      "primaryAction": "Discover my source"
+      "method": "Bee learns how your business works from client conversations, delivery, and feedback—then turns recurring signals into the content and follow-ups worth doing this week.",
+      "primaryAction": "Let Bee learn my business",
+      "traceability": "Every insight links back to its source record."
     },
     "insight": {
       "sampleLabel": "SAMPLE INSIGHT",
       "todayLabel": "TODAY'S INSIGHT",
-      "sampleTitle": "Bee forms a point of view from your services, cases and real records.",
+      "sampleTitle": "“Project deep-dives” keep coming up.",
+      "evidenceLabel": "EVIDENCE",
+      "evidence": {"delivery": "2 mock interview sessions", "feedback": "2 client feedback records"},
+      "opportunityLabel": "GROWTH OPPORTUNITY",
+      "opportunity": "Reframe “Mock Interview” as a “Project Storytelling Diagnostic.”",
       "realTitle": "Your real work is beginning to leave a trace.",
       "realEmphasis": "Keep moving and the signal will become clearer.",
-      "sampleNote": "Generated after your first diagnosis",
+      "sampleNote": "Once you leave real records, Bee will form an insight grounded in your business.",
       "todayAction": "View today's actions",
       "metrics": {"positioning": "Positioning", "expression": "Expression", "attraction": "Customer pull", "growth": "Sustained growth"}
     },
     "flow": {"label": "FLOW", "sample": "PENDING", "caption": "Current growth momentum"},
     "memory": {"eyebrow": "BUSINESS MEMORY", "title": "Your experience stays here", "observation": "Observations", "pattern": "Patterns", "principle": "Principles", "unit": "", "emptyState": "Your first signal is waiting...", "sourceIntro": "Bee will slowly notice:", "sources": {"service": "Services", "case": "Cases", "feedback": "Customer feedback"}, "emptyDescription": "Leave the facts first. Observations will emerge on their own.", "emptyAction": "Record a case", "observationState": "Bee is organizing the facts you left", "observationDescription": "{evidence} facts are now part of your business memory. Repeated signals will emerge as real experience grows.", "patternState": "Some signals are beginning to repeat", "patternDescription": "Bee has found {patterns, plural, one {one repeating signal} other {# repeating signals}} in your real records.", "openNotebook": "See Bee's observations"},
     "loop": {
-      "eyebrow": "OPERATING ASSETS",
-      "title": "How experience becomes a method",
-      "description": "Keep what happened first. Let repeated signals reveal themselves over time.",
-      "steps": {
-        "service": {"title": "Service", "description": "Define the value you provide."},
-        "case": {"title": "Case", "description": "Record one real engagement."},
-        "observation": {"title": "Observation", "description": "Notice signals that repeat."},
-        "principle": {"title": "Principle", "description": "Distill a method of your own."}
-      },
-      "openReflection": "Open Reflection"
+      "eyebrow": "A CONTINUOUS GROWTH LOOP",
+      "title": "Bee does not stop at a one-off answer.",
+      "description": "Every result feeds the next decision.",
+      "steps": {"records": "Real records", "understanding": "Business understanding", "actions": "Weekly actions", "results": "Results", "refine": "Refine and repeat"}
     },
     "workspace": {
       "eyebrow": "YOUR WORKSPACE",
