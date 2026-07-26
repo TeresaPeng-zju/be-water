@@ -7,9 +7,57 @@ import {ArrowLeft, ArrowRight, LoaderCircle} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
 import {PrototypeHeader} from "./prototype-header";
 import {MonthlyVolumeChart} from "./monthly-volume-chart";
-import {useBusinessMemory} from "@/lib/prototype/business-memory";
+import {isMockEnabled, useBusinessMemory} from "@/lib/prototype/business-memory";
+import {interviewGrowthMock} from "@/lib/prototype/mock";
 import {buildBusinessObservationSnapshot, observationSourceLabels} from "@/lib/prototype/observation-context";
 import type {BusinessObservationAnalysis, BusinessObservationSnapshot} from "@/lib/domain/business-observation";
+
+const observationCachePrefix = "bewater_observation_analysis_v3:";
+const observationMemoryCache = new Map<string,BusinessObservationAnalysis>();
+const observationRequests = new Map<string,Promise<BusinessObservationAnalysis>>();
+
+function fingerprint(value:string) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash,16777619);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function readCachedObservation(cacheKey:string) {
+  const memory = observationMemoryCache.get(cacheKey);
+  if (memory) return memory;
+  try {
+    const cached = JSON.parse(localStorage.getItem(cacheKey) ?? "null") as {analysis?:BusinessObservationAnalysis} | null;
+    if (!cached?.analysis) return null;
+    observationMemoryCache.set(cacheKey,cached.analysis);
+    return cached.analysis;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedObservation(cacheKey:string,analysis:BusinessObservationAnalysis) {
+  observationMemoryCache.set(cacheKey,analysis);
+  try {
+    localStorage.setItem(cacheKey,JSON.stringify({analysis,cachedAt:new Date().toISOString()}));
+    const staleKeys = Object.keys(localStorage).filter((key) => key.startsWith(observationCachePrefix) && key !== cacheKey).slice(0,-5);
+    staleKeys.forEach((key) => localStorage.removeItem(key));
+  } catch {
+    // Memory cache still prevents duplicate calls during this browser session.
+  }
+}
+
+function mockObservationAnalysis(serviceId?:string):BusinessObservationAnalysis {
+  const analyses = interviewGrowthMock.notebookAnalyses as Record<string,BusinessObservationAnalysis>;
+  if (serviceId && analyses[serviceId]) return analyses[serviceId];
+  const serviceAnalyses = Object.values(analyses);
+  return {
+    summary: "Bee 已比较模拟面试与简历优化的真实咨询、交付、反馈和结果记录。两个服务都出现了可继续验证的客户价值线索。",
+    observations: serviceAnalyses.flatMap((item) => item.observations),
+  };
+}
 
 function sourceHref(snapshot:BusinessObservationSnapshot,ref:string) {
   for (const service of snapshot.services) {
@@ -30,6 +78,7 @@ export function PrototypeNotebook({focusServiceId,focusCaseId}:{focusServiceId?:
   const snapshot = useMemo(() => buildBusinessObservationSnapshot(model,requestLocale),[model,requestLocale]);
   const sourceLabels = useMemo(() => observationSourceLabels(snapshot),[snapshot]);
   const signature = useMemo(() => JSON.stringify({requestLocale,monthlyTransactions:snapshot.monthlyTransactions,services:snapshot.services}),[requestLocale,snapshot]);
+  const cacheKey = useMemo(() => `${observationCachePrefix}${fingerprint(`${signature}|${focusServiceId ?? "all"}`)}`,[focusServiceId,signature]);
   const [analysisResult,setAnalysisResult] = useState<{signature:string;analysis:BusinessObservationAnalysis} | null>(null);
   const [analysisState,setAnalysisState] = useState<"idle" | "loading" | "failed">("idle");
   const analysis = analysisResult?.signature === signature ? analysisResult.analysis : null;
@@ -51,19 +100,24 @@ export function PrototypeNotebook({focusServiceId,focusCaseId}:{focusServiceId?:
 
   useEffect(() => {
     if (!evidence.length) return;
-    const cacheKey = "bewater_observation_analysis_v1";
-    try {
-      const cached = JSON.parse(localStorage.getItem(cacheKey) ?? "null") as {signature?:string;analysis?:BusinessObservationAnalysis} | null;
-      if (cached?.signature === signature && cached.analysis) {queueMicrotask(() => {setAnalysisResult({signature,analysis:cached.analysis!}); setAnalysisState("idle");}); return;}
-    } catch { /* A broken cache should never block fresh observation. */ }
-    const controller = new AbortController();
+    const cached = readCachedObservation(cacheKey);
+    if (cached) {queueMicrotask(() => {setAnalysisResult({signature,analysis:cached}); setAnalysisState("idle");}); return;}
+    let active = true;
     queueMicrotask(() => setAnalysisState("loading"));
-    fetch("/api/observations/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({locale:requestLocale,snapshot}),signal:controller.signal})
-      .then(async (response) => {if (!response.ok) throw new Error("Observation failed"); return response.json() as Promise<{analysis:BusinessObservationAnalysis}>;})
-      .then(({analysis:next}) => {setAnalysisResult({signature,analysis:next}); setAnalysisState("idle"); localStorage.setItem(cacheKey,JSON.stringify({signature,analysis:next}));})
-      .catch((error:unknown) => {if (error instanceof DOMException && error.name === "AbortError") return; setAnalysisState("failed");});
-    return () => controller.abort();
-  },[evidence.length,requestLocale,signature,snapshot]);
+    let request = observationRequests.get(cacheKey);
+    if (!request) {
+      request = isMockEnabled()
+        ? new Promise<BusinessObservationAnalysis>((resolve) => window.setTimeout(() => resolve(mockObservationAnalysis(focusServiceId)),3_000))
+        : fetch("/api/observations/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({locale:requestLocale,snapshot})})
+          .then(async (response) => {if (!response.ok) throw new Error("Observation failed"); return response.json() as Promise<{analysis:BusinessObservationAnalysis}>;})
+          .then(({analysis:next}) => next);
+      request = request.then((next) => {writeCachedObservation(cacheKey,next); return next;}).finally(() => observationRequests.delete(cacheKey));
+      observationRequests.set(cacheKey,request);
+    }
+    request.then((next) => {if (!active) return; setAnalysisResult({signature,analysis:next}); setAnalysisState("idle");})
+      .catch(() => {if (active) setAnalysisState("failed");});
+    return () => {active = false;};
+  },[cacheKey,evidence.length,focusServiceId,requestLocale,signature,snapshot]);
 
   return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell notebook-shell">
     <div className="prototype-page-head"><div><h1>{t("title")}</h1><span>{t("description")}</span></div></div>

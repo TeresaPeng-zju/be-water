@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import {useEffect,useState} from "react";
+import {useState} from "react";
 import {ArrowRight,BarChart3,Check,ChevronDown,Clipboard,ExternalLink,Sparkles,Target} from "lucide-react";
 import {PrototypeHeader} from "./prototype-header";
-import {applyMockGrowthResults,createGrowthPlanFromEvidence,isMockEnabled,reviseGrowthPlan,seedInterviewGrowthDemo,shouldSeedInterviewGrowthDemo,updateGrowthAction,useBusinessMemory,type GrowthAction,type GrowthMetrics} from "@/lib/prototype/business-memory";
+import {applyMockGrowthResults,createGrowthPlanFromEvidence,isMockEnabled,reviseGrowthPlan,updateGrowthAction,useBusinessMemory,type GrowthAction,type GrowthMetrics} from "@/lib/prototype/business-memory";
 
 const channelLabels = {xianyu:"闲鱼服务页",xiaohongshu:"小红书帖子",wechat:"微信回访"};
 const statusLabels = {planned:"待准备",ready:"素材已生成",published:"已执行",measured:"结果已回流"};
@@ -17,11 +17,6 @@ export function GrowthLoopPage() {
   const [copied,setCopied] = useState<string>();
   const [editingResult,setEditingResult] = useState<string>();
   const [draftMetrics,setDraftMetrics] = useState<GrowthMetrics>(emptyMetrics);
-
-  useEffect(() => {
-    const enabled = isMockEnabled();
-    if (enabled && shouldSeedInterviewGrowthDemo(model)) seedInterviewGrowthDemo();
-  },[model]);
 
   const plan = model.growthPlans?.[0];
   const service = model.services.find((entry) => entry.id === plan?.serviceId);

@@ -1,6 +1,6 @@
 "use client";
 
-import {useSyncExternalStore} from "react";
+import {useEffect, useSyncExternalStore} from "react";
 import type {BusinessEvent, IdentityCandidate, OutcomeClaim, RawSourceKind} from "@/lib/domain/business-event";
 import {isReusableServiceAssetRole, type CaseStatusProposal, type DeliveryMaterialFormat, type DeliveryMaterialRole, type PrototypeCaseStatus, type PrototypeDeliveryMaterial, type PrototypeDeliveryRelation, type PrototypeServiceAsset} from "@/lib/domain/delivery";
 import {interviewGrowthMock} from "@/lib/prototype/mock";
@@ -64,7 +64,13 @@ function writeModel(model: BusinessMemoryModel) {
   memoryStore.write(model);
 }
 
-export function useBusinessMemory() { return useSyncExternalStore(subscribe, readModel, () => emptyModel); }
+export function useBusinessMemory() {
+  const model = useSyncExternalStore(subscribe, readModel, () => emptyModel);
+  useEffect(() => {
+    if (shouldSeedInterviewGrowthDemo(model)) seedInterviewGrowthDemo();
+  },[model]);
+  return model;
+}
 
 function isBusinessMemoryModel(value:unknown):value is BusinessMemoryModel {
   return Boolean(value && typeof value === "object" && Array.isArray((value as BusinessMemoryModel).services));

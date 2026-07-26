@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {useEffect,useState} from "react";
+import {useState} from "react";
 import {ArrowRight, Check, Copy, GripVertical, Minus, MoreHorizontal, Pencil, Plus, Trash2} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
 import {PrototypeHeader} from "./prototype-header";
@@ -10,7 +10,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import ScrollStack, {ScrollStackItem} from "@/components/ui/scroll-stack";
 import {SpecularButton} from "@/components/ui/specular-button";
 import {ServiceChannelEditor} from "./service-channel-editor";
-import {addPrototypeService, defaultPrototypeStages, deletePrototypeService, duplicatePrototypeService, getPrototypeEffortMinutes, getPrototypeTurnaroundDays, isPresetStage, reorderPrototypeServices, seedInterviewGrowthDemo, shouldSeedInterviewGrowthDemo, type PricingMode, type PrototypeService, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeService, useBusinessMemory} from "@/lib/prototype/business-memory";
+import {addPrototypeService, defaultPrototypeStages, deletePrototypeService, duplicatePrototypeService, getPrototypeEffortMinutes, getPrototypeTurnaroundDays, isPresetStage, reorderPrototypeServices, type PricingMode, type PrototypeService, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeService, useBusinessMemory} from "@/lib/prototype/business-memory";
 
 const serviceSuggestions = ["careerPlanning", "resume", "interview", "aiConsulting"] as const;
 const pricingModes: PricingMode[] = ["session", "hourly", "package", "retainer"];
@@ -37,10 +37,6 @@ export function PrototypeServices() {
   const [stages, setStages] = useState<PrototypeStage[]>(() => defaultPrototypeStages.map((stage) => ({...stage})));
   const [draggingServiceId, setDraggingServiceId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<PrototypeService | null>(null);
-
-  useEffect(() => {
-    if (shouldSeedInterviewGrowthDemo(model)) seedInterviewGrowthDemo();
-  },[model]);
 
   const answers = [Boolean(name.trim()), Boolean(pricingMode), price !== "" && price > 0, effortMinutes !== "" && effortMinutes >= 10 && effortMinutes % 10 === 0, turnaroundDays !== "" && turnaroundDays >= 0 && Number.isInteger(turnaroundDays), channels.length > 0 && channels.every((channel) => channel.platform !== "other" || Boolean(channel.customName?.trim())), stages.length > 0 && stages.every((stage) => isPresetStage(stage) || Boolean(stage.label?.trim()))];
 
