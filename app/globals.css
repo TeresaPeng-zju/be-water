@@ -1421,6 +1421,14 @@ html[lang^="zh"] .services-page-head>div>span { margin-inline-start:.2em; }
   padding: 28px clamp(32px, 5vw, 76px) 30px;
 }
 
+.brand-home .business-memory-hero {
+  height: auto;
+  min-height: 540px;
+  flex: 0 0 auto;
+  padding-block: 48px 56px;
+  overflow: visible;
+}
+
 .brand-home .brand-hero-grid,
 .brand-home.is-chinese .brand-hero-grid {
   grid-template-columns: minmax(0, 0.94fr) minmax(500px, 1.06fr);
@@ -1444,6 +1452,21 @@ html[lang^="zh"] .services-page-head>div>span { margin-inline-start:.2em; }
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.12em;
+}
+
+.brand-home.is-english .brand-eyebrow {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  min-height: 22px;
+  margin: 0;
+  padding: 2px 0 3px;
+  overflow: visible !important;
+  font-family: Arial, "Helvetica Neue", sans-serif;
+  font-size: 12px;
+  line-height: 17px;
+  transform: none;
+  -webkit-font-smoothing: antialiased;
 }
 
 .brand-home .brand-hero-title,
