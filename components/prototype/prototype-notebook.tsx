@@ -26,9 +26,9 @@ export function PrototypeNotebook({focusServiceId,focusCaseId}:{focusServiceId?:
   const model = useBusinessMemory();
   const cases = model.services.flatMap((service) => service.cases);
   const evidence = cases.flatMap((item) => item.evidence);
-  const snapshot = useMemo(() => buildBusinessObservationSnapshot(model),[model]);
-  const sourceLabels = useMemo(() => observationSourceLabels(snapshot),[snapshot]);
   const requestLocale = locale === "en-US" || locale === "zh-TW" ? locale : "zh-CN";
+  const snapshot = useMemo(() => buildBusinessObservationSnapshot(model,requestLocale),[model,requestLocale]);
+  const sourceLabels = useMemo(() => observationSourceLabels(snapshot),[snapshot]);
   const signature = useMemo(() => JSON.stringify({requestLocale,monthlyTransactions:snapshot.monthlyTransactions,services:snapshot.services}),[requestLocale,snapshot]);
   const [analysisResult,setAnalysisResult] = useState<{signature:string;analysis:BusinessObservationAnalysis} | null>(null);
   const [analysisState,setAnalysisState] = useState<"idle" | "loading" | "failed">("idle");
@@ -74,19 +74,20 @@ export function PrototypeNotebook({focusServiceId,focusCaseId}:{focusServiceId?:
       <span>{focusCase ? contextT("caseBody",{evidence:focusedEvidence.length,events:focusedEventCount}) : contextT("serviceBody",{cases:focusedCases.length,evidence:focusedEvidence.length})}</span>
       <small>{relatedObservationCount ? contextT("related",{count:relatedObservationCount}) : contextT("waiting")}</small>
     </section> : null}
-    <div className="notebook-rule"><span className="memory-bee notebook-rule-bee" aria-hidden="true"><Image src="/assets/brand/bee-memory.png" alt="" width={24} height={24}/></span><p>{t("beeRule")}</p></div>
+    <div className="notebook-rule"><span className="memory-bee notebook-rule-bee" aria-hidden="true"><Image src="/assets/brand/bee-memory.png" alt="" width={24} height={24} unoptimized/></span><p>{t("beeRule")}</p></div>
     {evidence.length ? <div className="notebook-entries">
       <article><p>{t("observation")}</p><h2>{t("observationTitle", {cases:cases.length, evidence:evidence.length})}</h2><span>{t("observationBody", {services:model.services.length})}</span></article>
       {snapshot.monthlyTransactions.length ? <article className="notebook-volume"><p>{t("monthlyLabel")}</p><h2>{t("monthlyTitle")}</h2><span>{snapshot.monthlyTransactions.length < 12 ? t("monthlyEarly") : t("monthlyReady")}</span><MonthlyVolumeChart months={snapshot.monthlyTransactions} trendLabel={t("monthlyTrend")}/></article> : null}
       {analysisState === "loading" ? <article className="is-pending notebook-analyzing"><LoaderCircle/><div><p>{t("analysisLabel")}</p><h2>{t("analysisLoading")}</h2><span>{t("analysisLoadingBody")}</span></div></article> : null}
       {analysis?.observations.map((observation,index) => <article className={observation.sourceRefs.some((ref) => focusRefs.has(ref)) ? "is-contextual" : undefined} key={`${observation.title}-${index}`}><p>{observation.kind === "pattern" ? t("pattern") : observation.kind === "content_move" ? t("contentMove") : t("observation")}</p><h2>{observation.title}</h2><span>{observation.body}</span><div className="notebook-sources">{observation.sourceRefs.map((ref) => <Link key={ref} href={sourceHref(snapshot,ref)}>{sourceLabels.get(ref) ?? t("sourceFallback")}</Link>)}</div></article>)}
       {analysis ? <p className="notebook-analysis-boundary">{analysis.summary}</p> : null}
+      {analysis ? <Link href="/growth" className="notebook-growth-cta"><span className="notebook-growth-copy"><strong>把这些判断变成本周行动</strong><small>Bee 会选择三项优先动作，并生成可直接使用的营销素材。</small></span><span className="notebook-growth-action">查看增长计划<ArrowRight/></span></Link> : null}
       {analysisState === "failed" ? <article className="is-pending"><p>{t("analysisLabel")}</p><h2>{t("analysisFailed")}</h2><span>{t("analysisFailedBody")}</span></article> : null}
       {analysisState !== "loading" && !analysis?.observations.length ? <article className="is-pending"><p>{t("pattern")}</p><h2>{t("pendingTitle")}</h2><span>{t("pendingBody")}</span></article> : null}
       <article className="is-pending"><p>{t("principle")}</p><h2>{t("principleTitle")}</h2><span>{t("principleBody")}</span></article>
     </div> : <div className="prototype-empty"><p>{t("emptyEyebrow")}</p><h2>{t("emptyTitle")}</h2><span>{t("emptyDescription")}</span><Link href="/services" className="prototype-text-action">{t("emptyAction")}<ArrowRight className="size-4"/></Link></div>}
     {locale === "zh-CN" ? <figure className="notebook-slogan">
-      <Image src="/assets/brand/notebook-slogan.png" alt="Bee：想先认识你的经营。" fill sizes="(max-width: 720px) 76vw, 420px"/>
+      <Image src="/assets/brand/notebook-slogan.png" alt="Bee：想先认识你的经营。" fill sizes="(max-width: 720px) 76vw, 420px" unoptimized/>
     </figure> : null}
   </section></main>;
 }

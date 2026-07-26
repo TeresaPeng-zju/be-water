@@ -66,7 +66,7 @@ export function WorkspaceHome({ data }: { data: WorkspaceHomeData }) {
               Workspace
             </h1>
           </div>
-          <Link href="/workspace/records/new" className="inline-flex h-10 items-center gap-2 rounded-lg bg-[var(--brand)] px-4 text-sm font-semibold text-white shadow-[0_7px_18px_rgba(33,111,100,0.16)] hover:bg-[var(--brand-dark)]"><Plus className="size-4" />记录</Link>
+          <Link href="/workspace/records/new" className="inline-flex h-10 items-center gap-2 rounded-lg bg-[var(--brand)] px-4 text-sm font-semibold text-white shadow-[0_7px_18px_rgba(72,113,182,0.16)] hover:bg-[var(--brand-dark)]"><Plus className="size-4" />记录</Link>
         </header>
 
         <div className="mt-8 grid items-start gap-9 xl:grid-cols-[minmax(0,1fr)_320px]">

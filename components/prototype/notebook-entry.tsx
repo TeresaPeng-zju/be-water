@@ -4,7 +4,7 @@ import {ArrowRight} from "lucide-react";
 
 export function NotebookEntry({href,eyebrow,title,description,action}:{href:string;eyebrow:string;title:string;description:string;action:string}) {
   return <aside className="contextual-notebook-entry" aria-labelledby={`notebook-entry-${href.replaceAll(/[^a-zA-Z0-9]/g,"-")}`}>
-    <Image src="/assets/brand/bee-memory.png" alt="" width={44} height={44}/>
+    <Image src="/assets/brand/bee-memory.png" alt="" width={44} height={44} unoptimized/>
     <div>
       <p>{eyebrow}</p>
       <h2 id={`notebook-entry-${href.replaceAll(/[^a-zA-Z0-9]/g,"-")}`}>{title}</h2>

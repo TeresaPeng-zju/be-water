@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarPlus, Send, X } from "lucide-react";
+import { CalendarPlus, Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 import {
   createCustomerFollowUpAction,
@@ -17,6 +17,7 @@ import {
 } from "@/lib/domain/customer-detail";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
+import {Drawer} from "@/components/ui/drawer";
 
 export function RelationshipActionPanel({
   customerId,
@@ -64,33 +65,7 @@ export function RelationshipActionPanel({
 
   const scheduling = mode === "schedule";
   return (
-    <div className="fixed inset-0 z-40 flex justify-end bg-black/20" role="presentation" onMouseDown={onClose}>
-      <aside
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="relationship-action-heading"
-        onMouseDown={(event) => event.stopPropagation()}
-        className="h-full w-full max-w-[420px] overflow-y-auto border-l border-[var(--line-strong)] bg-[var(--canvas)] shadow-[-12px_0_32px_rgba(23,33,31,0.08)]"
-      >
-        <header className="flex items-start gap-4 border-b border-[var(--line)] px-6 py-5">
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[var(--brand-soft)] text-[var(--brand)]">
-            {scheduling ? <CalendarPlus aria-hidden className="size-4" /> : <Send aria-hidden className="size-4" />}
-          </span>
-          <div className="min-w-0 flex-1">
-            <h2 id="relationship-action-heading" className="text-base font-semibold text-[var(--ink)]">
-              {scheduling ? "Schedule Follow-up" : "Send Follow-up"}
-            </h2>
-            <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
-              {scheduling
-                ? "Set a real reminder for the next relationship action."
-                : "BeWater does not send or generate the message. Record what you sent outside the workspace."}
-            </p>
-          </div>
-          <button type="button" onClick={onClose} aria-label="Close follow-up panel" className="grid size-8 place-items-center rounded-lg text-[var(--muted)] outline-none hover:bg-black/[0.04] focus-visible:ring-4 focus-visible:ring-[var(--focus)]">
-            <X aria-hidden className="size-4" />
-          </button>
-        </header>
-
+    <Drawer title={scheduling ? "Schedule Follow-up" : "Send Follow-up"} description={scheduling ? "Set a real reminder for the next relationship action." : "BeWater does not send or generate the message. Record what you sent outside the workspace."} icon={scheduling ? CalendarPlus : Send} onClose={onClose} width="420px">
         {scheduling ? (
           <form onSubmit={scheduleForm.handleSubmit(schedule)} className="space-y-5 px-6 py-6" noValidate>
             <input type="hidden" {...scheduleForm.register("customerId")} />
@@ -129,7 +104,6 @@ export function RelationshipActionPanel({
             </div>
           </form>
         )}
-      </aside>
-    </div>
+    </Drawer>
   );
 }

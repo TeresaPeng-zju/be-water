@@ -101,6 +101,7 @@ export function PrototypeCaseDetail({serviceId, caseId}: {serviceId: string; cas
   const discoveryChannel = item.discoveryChannel ?? service.channels?.find((channel) => channel.id === item.discoveryChannelId);
   const transactionChannel = item.transactionChannel ?? service.channels?.find((channel) => channel.id === item.transactionChannelId);
   const businessEventCount = item.evidence.reduce((count,evidence) => count + (evidence.businessEvents?.length ?? 0),0);
+  const businessEvents = item.evidence.flatMap((evidence) => (evidence.businessEvents ?? []).map((event) => ({...event,evidenceId:evidence.id})))
 
   return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell case-journey-shell">
     <Link href={`/services/${serviceId}`} className="prototype-back"><ArrowLeft className="size-4"/>{service.name}</Link>
@@ -120,6 +121,12 @@ export function PrototypeCaseDetail({serviceId, caseId}: {serviceId: string; cas
       })}</div>
       <button className="journey-other" onClick={() => open({id:"other-fact",type:"note",label:t("types.note")})}><Plus/>{t("addOther")}</button>
     </section>
+
+    {businessEvents.length ? <section className="case-storyline">
+      <div className="journey-heading"><p>完整经营旅程</p><h2>从咨询、预约到交付与反馈</h2><span>Bee 把不同材料中的经营事件按同一个客户串联起来，每一步都能回到原始记录。</span></div>
+      {customerEntity && customerEntity.identities.length > 1 ? <div className="case-identity-banner"><span>同一客户</span><strong>{customerEntity.identities.map((identity)=>`${identity.label}（${identity.source ?? "记录"}）`).join(" = ")}</strong><small>已归一为 {customerEntity.primaryName}</small></div>:null}
+      <ol>{businessEvents.map((event,index)=><li key={`${event.evidenceId}-${event.type}-${index}`}><i>{index+1}</i><div><small>{event.type.replaceAll("_"," ")}</small><h3>{event.title}</h3><p>{event.summary}</p>{event.evidence.length?<blockquote>“{event.evidence[0]}”</blockquote>:null}</div></li>)}</ol>
+    </section>:null}
 
     <CaseDeliveryWorkspace serviceId={serviceId} caseId={caseId}/>
 

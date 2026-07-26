@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import {useEffect, useRef} from "react";
+import {BrandSignature} from "@/components/brand/brand-signature";
 
 type ConfirmDialogProps = {
   open: boolean;
@@ -48,10 +48,7 @@ export function ConfirmDialog({open, title, description, cancelLabel, confirmLab
       }}
     >
       <div className="bewater-confirm-card">
-        <div className="bewater-confirm-brand" aria-hidden="true">
-          <Image src="/assets/brand/bee-drop-mark.svg" alt="" width={30} height={30}/>
-          <span>Be Water</span>
-        </div>
+        <BrandSignature size={30} className="bewater-confirm-brand"/>
         <h2 id="bewater-confirm-title">{title}</h2>
         <p id="bewater-confirm-description">{description}</p>
         <div className="bewater-confirm-actions">

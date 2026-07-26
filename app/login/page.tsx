@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getTranslations} from "next-intl/server";
 import {LoginForm} from "@/components/auth/login-form";
+import {BrandSignature} from "@/components/brand/brand-signature";
 import {LanguageSwitcher} from "@/components/i18n/language-switcher";
 import {safeNextPath} from "@/lib/auth/redirect";
 import {createSupabaseServerClient} from "@/lib/supabase/server";
@@ -18,7 +18,7 @@ export default async function LoginPage({searchParams}: {searchParams: Promise<{
   return (
     <main className="login-canvas min-h-dvh px-5 py-6 sm:px-8">
       <header className="mx-auto flex max-w-[1180px] items-center justify-between">
-        <Link href="/workspace" className="brand-signature"><Image src="/assets/brand/bee-drop-mark.svg" alt="" width={34} height={34} className="size-[34px] rounded-xl"/><span>Be Water</span></Link>
+        <BrandSignature href="/workspace"/>
         <LanguageSwitcher />
       </header>
       <section className="mx-auto grid min-h-[calc(100dvh-90px)] max-w-[1180px] place-items-center py-14">

@@ -16,11 +16,12 @@ import type {
   SchedulePageData,
 } from "@/lib/domain/schedule";
 import { Button } from "@/components/ui/button";
-import { BeeObservationCard } from "./bee-observation-card";
+import { BeeObservationCard } from "@/components/ui/bee-observation-card";
 import { CapacitySummaryCard } from "./capacity-summary-card";
 import { DayDetailDrawer } from "./day-detail-drawer";
 import { SimulationPanel } from "./simulation-panel";
 import { WeekTimeline } from "./week-timeline";
+import {WorkspacePage} from "@/components/ui/workspace-page";
 
 export function SchedulePage({ data }: { data: SchedulePageData }) {
   const [days, setDays] = useState(data.days);
@@ -82,8 +83,7 @@ export function SchedulePage({ data }: { data: SchedulePageData }) {
   }
 
   return (
-    <main className="min-h-dvh bg-[var(--canvas)] lg:ml-[224px]">
-      <div className="mx-auto w-full max-w-[1500px] px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
+    <WorkspacePage maxWidth="1500px">
         <header className="border-b border-[var(--line)] pb-7">
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div>
@@ -176,7 +176,7 @@ export function SchedulePage({ data }: { data: SchedulePageData }) {
             <p className="px-1 pt-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--subtle)]">
               Business Suggestions
             </p>
-            <BeeObservationCard observation={data.observation} />
+            <BeeObservationCard observation={data.observation ?? "No repeated capacity pattern yet. BeWater will surface one only after it persists."} action={<Link href="#weekly-capacity">View details →</Link>}/>
             {data.weeklyCapacityHours === undefined ? (
               <section className="rounded-xl border border-dashed border-[var(--line-strong)] bg-white p-4">
                 <p className="text-xs font-medium text-[var(--ink)]">Capacity needs one baseline.</p>
@@ -190,8 +190,6 @@ export function SchedulePage({ data }: { data: SchedulePageData }) {
             ) : null}
           </aside>
         </div>
-      </div>
-
       {simulationOpen ? (
         <SimulationPanel
           services={data.services}
@@ -212,6 +210,6 @@ export function SchedulePage({ data }: { data: SchedulePageData }) {
           onClose={() => setSelectedDate(undefined)}
         />
       ) : null}
-    </main>
+    </WorkspacePage>
   );
 }

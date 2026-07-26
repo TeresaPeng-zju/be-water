@@ -1,12 +1,18 @@
 import {getPrototypeCaseStatus, getPrototypeEffortMinutes, getPrototypePurchaseNumber, getPrototypeStages, getPrototypeTurnaroundDays, type BusinessMemoryModel, type PrototypeServiceChannel} from "./business-memory";
 import type {BusinessObservationSnapshot} from "@/lib/domain/business-observation";
 
-function channelName(channel?: PrototypeServiceChannel) {
+const channelNames = {
+  "zh-CN": {xiaohongshu:"小红书",xianyu:"闲鱼",zhishixingqiu:"知识星球",wechat:"微信",douyin:"抖音",offline:"线下",other:"其他"},
+  "zh-TW": {xiaohongshu:"小紅書",xianyu:"閒魚",zhishixingqiu:"知識星球",wechat:"微信",douyin:"抖音",offline:"線下",other:"其他"},
+  "en-US": {xiaohongshu:"Xiaohongshu",xianyu:"Xianyu",zhishixingqiu:"Knowledge Planet",wechat:"WeChat",douyin:"Douyin",offline:"Offline",other:"Other"},
+} as const;
+
+function channelName(channel?: PrototypeServiceChannel, locale: keyof typeof channelNames = "zh-CN") {
   if (!channel) return null;
-  return channel.platform === "other" ? channel.customName || "other" : channel.platform;
+  return channel.platform === "other" ? channel.customName || channelNames[locale].other : channelNames[locale][channel.platform];
 }
 
-export function buildBusinessObservationSnapshot(model: BusinessMemoryModel): BusinessObservationSnapshot {
+export function buildBusinessObservationSnapshot(model: BusinessMemoryModel, locale: keyof typeof channelNames = "zh-CN"): BusinessObservationSnapshot {
   const datedCases = model.services.flatMap((service) => service.cases.map((item) => ({service,item,date:(item.occurredAt ?? item.createdAt.slice(0,10)).slice(0,7)}))).filter((entry) => /^\d{4}-\d{2}$/.test(entry.date)).sort((a,b) => a.date.localeCompare(b.date));
   const monthlyTransactions:BusinessObservationSnapshot["monthlyTransactions"] = [];
   if (datedCases.length) {
@@ -17,7 +23,7 @@ export function buildBusinessObservationSnapshot(model: BusinessMemoryModel): Bu
       const month = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2,"0")}`;
       const entries = datedCases.filter((entry) => entry.date === month);
       const countBy = (values:string[]) => [...new Set(values)].map((name) => ({name,count:values.filter((value) => value === name).length})).sort((a,b) => b.count - a.count);
-      monthlyTransactions.push({month,total:entries.length,services:countBy(entries.map((entry) => entry.service.name)),discoveryChannels:countBy(entries.map(({service,item}) => channelName(item.discoveryChannel ?? service.channels?.find((channel) => channel.id === item.discoveryChannelId))).filter((value):value is string => Boolean(value)))});
+      monthlyTransactions.push({month,total:entries.length,services:countBy(entries.map((entry) => entry.service.name)),discoveryChannels:countBy(entries.map(({service,item}) => channelName(item.discoveryChannel ?? service.channels?.find((channel) => channel.id === item.discoveryChannelId),locale)).filter((value):value is string => Boolean(value)))});
       cursor.setMonth(cursor.getMonth() + 1);
     }
   }
@@ -31,7 +37,7 @@ export function buildBusinessObservationSnapshot(model: BusinessMemoryModel): Bu
       serviceListPrice:service.price ?? null,
       effortMinutes:getPrototypeEffortMinutes(service) ?? null,
       turnaroundDays:getPrototypeTurnaroundDays(service) ?? null,
-      channels:(service.channels ?? []).map((channel) => ({ref:`channel:${service.id}:${channel.id}`,label:channelName(channel) ?? channel.platform,platform:channel.platform,launchedAt:channel.launchedAt ?? null,status:channel.status})),
+      channels:(service.channels ?? []).map((channel) => ({ref:`channel:${service.id}:${channel.id}`,label:channelName(channel,locale) ?? channel.platform,platform:channel.platform,launchedAt:channel.launchedAt ?? null,status:channel.status})),
       stages:getPrototypeStages(service).map((stage) => ({ref:`stage:${service.id}:${stage.id}`,label:stage.label || stage.type,type:stage.type})),
       assets:(service.assets ?? []).map((asset) => ({ref:`asset:${asset.id}`,label:asset.title,role:asset.role,format:asset.format,content:asset.content?.slice(0,5000) ?? null,sourceCaseRef:`case:${asset.sourceCaseId}`,sourceMaterialRef:`material:${asset.sourceMaterialId}`})),
       cases:service.cases.slice(-60).map((item) => {
@@ -47,8 +53,8 @@ export function buildBusinessObservationSnapshot(model: BusinessMemoryModel): Bu
           purchaseNumber:getPrototypePurchaseNumber(model,item),
           occurredAt:item.occurredAt ?? null,
           status:getPrototypeCaseStatus(item),
-          discoveryChannel:channelName(discovery),
-          transactionChannel:channelName(transaction),
+          discoveryChannel:channelName(discovery,locale),
+          transactionChannel:channelName(transaction,locale),
           materials:(item.materials ?? []).map((material) => ({ref:`material:${material.id}`,label:`${item.customer} · ${material.title}`,role:material.role,format:material.format,content:material.content?.slice(0,5000) ?? null,linkedEvidenceRefs:material.linkedEvidenceIds.map((id) => `evidence:${id}`),fulfillsMaterialRefs:(material.fulfillsMaterialIds ?? []).map((id) => `material:${id}`),validatesMaterialRefs:(material.validatesMaterialIds ?? []).map((id) => `material:${id}`),serviceAssetRef:material.promotedAssetId ? `asset:${material.promotedAssetId}` : null})),
           evidence:item.evidence.slice(-100).map((evidence) => ({
             ref:`evidence:${evidence.id}`,

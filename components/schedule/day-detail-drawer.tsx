@@ -1,9 +1,10 @@
 "use client";
 
-import { CalendarClock, X } from "lucide-react";
+import { CalendarClock } from "lucide-react";
 import type { ScheduleDay } from "@/lib/domain/schedule";
 import { Field, Select } from "@/components/ui/field";
 import { CapacityIndicator, formatHours } from "./capacity-indicator";
+import {Drawer} from "@/components/ui/drawer";
 
 export function DayDetailDrawer({
   day,
@@ -21,34 +22,7 @@ export function DayDetailDrawer({
   const booked = day.blocks.reduce((sum, block) => sum + block.estimatedHours, 0);
 
   return (
-    <div className="fixed inset-0 z-40 flex justify-end bg-black/20" role="presentation" onMouseDown={onClose}>
-      <aside
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="day-detail-heading"
-        onMouseDown={(event) => event.stopPropagation()}
-        className="h-full w-full max-w-[460px] overflow-y-auto border-l border-[var(--line-strong)] bg-[var(--canvas)] shadow-[-12px_0_32px_rgba(23,33,31,0.08)]"
-      >
-        <header className="sticky top-0 z-10 flex items-start gap-4 border-b border-[var(--line)] bg-[var(--canvas)] px-6 py-5">
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[var(--brand-soft)] text-[var(--brand)]">
-            <CalendarClock aria-hidden className="size-4" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs text-[var(--subtle)]">Daily workload</p>
-            <h2 id="day-detail-heading" className="mt-1 text-base font-semibold text-[var(--ink)]">
-              {day.label}, {day.dayNumber}
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close day details"
-            className="grid size-8 place-items-center rounded-lg text-[var(--muted)] outline-none hover:bg-black/[0.04] focus-visible:ring-4 focus-visible:ring-[var(--focus)]"
-          >
-            <X aria-hidden className="size-4" />
-          </button>
-        </header>
-
+    <Drawer title={`${day.label}, ${day.dayNumber}`} eyebrow="Daily workload" icon={CalendarClock} onClose={onClose} width="460px" stickyHeader>
         <div className="px-6 py-6">
           <section className="rounded-xl border border-[var(--line)] bg-white p-4" aria-label="Daily capacity">
             <dl className="grid grid-cols-3 gap-3 text-center">
@@ -140,7 +114,6 @@ export function DayDetailDrawer({
             )}
           </section>
         </div>
-      </aside>
-    </div>
+    </Drawer>
   );
 }

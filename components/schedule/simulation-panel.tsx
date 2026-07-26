@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RotateCcw, TestTube2, X } from "lucide-react";
+import { RotateCcw, TestTube2 } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import {
   orderSimulationSchema,
@@ -12,6 +12,7 @@ import {
 } from "@/lib/domain/schedule";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Select, Switch } from "@/components/ui/field";
+import {Drawer} from "@/components/ui/drawer";
 
 export function SimulationPanel({
   services,
@@ -63,36 +64,7 @@ export function SimulationPanel({
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex justify-end bg-black/20" role="presentation" onMouseDown={onClose}>
-      <aside
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="simulation-heading"
-        onMouseDown={(event) => event.stopPropagation()}
-        className="h-full w-full max-w-[420px] overflow-y-auto border-l border-[var(--line-strong)] bg-[var(--canvas)] shadow-[-12px_0_32px_rgba(23,33,31,0.08)]"
-      >
-        <header className="sticky top-0 z-10 flex items-start gap-4 border-b border-[var(--line)] bg-[var(--canvas)] px-6 py-5">
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[var(--brand-soft)] text-[var(--brand)]">
-            <TestTube2 aria-hidden className="size-4" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <h2 id="simulation-heading" className="text-base font-semibold text-[var(--ink)]">
-              Simulate New Order
-            </h2>
-            <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
-              Preview capacity impact. Nothing here is saved.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close simulation"
-            className="grid size-8 place-items-center rounded-lg text-[var(--muted)] outline-none hover:bg-black/[0.04] focus-visible:ring-4 focus-visible:ring-[var(--focus)]"
-          >
-            <X aria-hidden className="size-4" />
-          </button>
-        </header>
-
+    <Drawer title="Simulate New Order" description="Preview capacity impact. Nothing here is saved." icon={TestTube2} onClose={onClose} width="420px" stickyHeader>
         <form onSubmit={(event) => event.preventDefault()} className="space-y-6 px-6 py-6" noValidate>
           {services.length ? (
             <>
@@ -217,7 +189,6 @@ export function SimulationPanel({
             Keep Simulation
           </Button>
         </footer>
-      </aside>
-    </div>
+    </Drawer>
   );
 }

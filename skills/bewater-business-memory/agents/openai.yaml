@@ -1,0 +1,4 @@
+interface:
+  display_name: "BeWater Business Memory"
+  short_description: "Turn real client work into evidence-backed business memory"
+  default_prompt: "Use $bewater-business-memory to organize these client records and identify evidence-backed business signals."

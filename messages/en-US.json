@@ -18,12 +18,12 @@
     "headerPrimaryUser": "Return to today's actions",
     "hero": {
       "eyebrow": "A GROWTH AGENT GROUNDED IN REAL WORK",
-      "titleLine1": "Let every real client engagement",
-      "titleLine2": "guide your next growth move.",
+      "titleLine1": "Let every real engagement",
+      "titleLine2": "guide your next client win.",
       "description": "Bee will remember it for you.",
-      "method": "Bee learns from client conversations, delivery, and feedback—then turns recurring signals into content and follow-up directions worth testing next.",
-      "primaryAction": "Let Bee start learning",
-      "traceability": "Every judgment Bee forms from real work links back to its source record."
+      "method": "Bee understands your business through inquiries, delivery, and client feedback—then turns recurring signals into this week's most valuable content and follow-ups.",
+      "primaryAction": "Let Bee read my business",
+      "traceability": "Every judgment links back to its source record."
     },
     "insight": {
       "sampleLabel": "EXAMPLE · HOW BEE FORMS A JUDGMENT",
@@ -35,24 +35,52 @@
         "feedback": {"quote": "“I finally know how to explain my project experience.”", "source": "CLIENT FEEDBACK"}
       },
       "judgmentLabel": "BEE'S READ",
-      "judgment": "The difficulty before delivery and the value felt afterward point to the same need: project storytelling.",
+      "judgment": "The difficulty before delivery and the value felt afterward point to the same need: <insight>project storytelling</insight>.",
       "actionLabel": "GROWTH ACTION",
-      "action": "Position “Mock Interview” as a “Project Storytelling Diagnostic” and test the new service description this week.",
+      "action": "Position “Mock Interview” as a “<target>Project Storytelling Diagnostic</target>” and test the new service description this week.",
       "opportunityLabel": "GROWTH OPPORTUNITY",
       "opportunity": "Reframe “Mock Interview” as a “Project Storytelling Diagnostic.”",
       "realTitle": "Your real work is beginning to leave a trace.",
       "realEmphasis": "Keep moving and the signal will become clearer.",
-      "sampleNote": "Once you leave real records, Bee will form an insight grounded in your business.",
+      "sampleNote": "Bee will keep looking for evidence and revise this judgment as it learns.",
       "todayAction": "View today's actions",
       "metrics": {"positioning": "Positioning", "expression": "Expression", "attraction": "Customer pull", "growth": "Sustained growth"}
     },
     "flow": {"label": "FLOW", "sample": "PENDING", "caption": "Current growth momentum"},
     "memory": {"eyebrow": "BUSINESS MEMORY", "title": "Your experience stays here", "observation": "Observations", "pattern": "Patterns", "principle": "Principles", "unit": "", "emptyState": "Your first signal is waiting...", "sourceIntro": "Bee will slowly notice:", "sources": {"service": "Services", "case": "Cases", "feedback": "Customer feedback"}, "emptyDescription": "Leave the facts first. Observations will emerge on their own.", "emptyAction": "Record a case", "observationState": "Bee is organizing the facts you left", "observationDescription": "{evidence} facts are now part of your business memory. Repeated signals will emerge as real experience grows.", "patternState": "Some signals are beginning to repeat", "patternDescription": "Bee has found {patterns, plural, one {one repeating signal} other {# repeating signals}} in your real records.", "openNotebook": "See Bee's observations"},
+    "skill": {
+      "eyebrow": "USE DIRECTLY · BEWATER SKILL",
+      "title": "Let Bee understand your business where you already work.",
+      "description": "Use BeWater as a Skill in Codex or WorkBuddy. Paste client conversations, meeting notes, and delivery feedback; Bee organizes the facts, connects cases, and looks for recurring signals over time.",
+      "download": "Download BeWater Skill",
+      "compatibility": "For Codex / WorkBuddy",
+      "note": "No cleanup required. One occurrence is a fact; repetition may become a pattern.",
+      "promptListLabel": "BeWater Skill prompt examples",
+      "copy": "Copy",
+      "copied": "Copied",
+      "copyLabel": "Copy the {name} prompt",
+      "prompts": {
+        "organize": {"label": "Organize", "prompt": "Organize this client conversation into facts, business events, and states that still need confirmation"},
+        "diagnose": {"label": "Diagnose", "prompt": "Compare my recent cases and find recurring business signals that still need validation"},
+        "distill": {"label": "Distill", "prompt": "Identify delivery work that is ready to become a reusable template or SOP"}
+      }
+    },
     "loop": {
       "eyebrow": "A CONTINUOUS GROWTH LOOP",
-      "title": "Bee keeps learning from results.",
+      "title": "How Bee reaches a judgment",
       "description": "The results you record become evidence for the next judgment.",
-      "steps": {"records": "Real records", "understanding": "Business understanding", "value": "Recurring value", "action": "Growth action", "return": "Results return"}
+      "steps": {
+        "records": {"title": "Real material", "description": "First-hand inquiries, delivery notes, and feedback"},
+        "understanding": {"title": "Business understanding", "description": "Bee extracts key context and customer value"},
+        "action": {"title": "This week's actions", "description": "The content, follow-ups, and growth moves worth doing"},
+        "result": {"title": "Execution results", "description": "What changed after each action was carried out"},
+        "adjustment": {"title": "Next adjustment", "description": "Bee learns from outcomes and revises its next judgment"}
+      }
+    },
+    "stats": {
+      "label": "Illustrative business memory",
+      "items": {"records": "Business records", "feedback": "Client feedback", "patterns": "Patterns found", "actions": "Weekly actions", "validated": "Validated tests"},
+      "units": {"records": " records", "feedback": " items", "patterns": "", "actions": "", "validated": ""}
     },
     "workspace": {
       "eyebrow": "YOUR WORKSPACE",

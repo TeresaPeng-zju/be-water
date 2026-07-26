@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import {BriefcaseBusiness, Files, Settings, Sun, Waypoints} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {AccountMenu} from "@/components/auth/account-menu";
+import {BrandSignature} from "@/components/brand/brand-signature";
 import {LanguageSwitcher} from "@/components/i18n/language-switcher";
 import {cn} from "@/lib/utils";
 
@@ -22,10 +22,7 @@ export function WorkspaceSidebar({activeItem = "今日"}: {activeItem?: string})
   return (
     <aside className="mist-panel border-b lg:fixed lg:inset-y-0 lg:left-0 lg:w-[224px] lg:border-b-0 lg:border-r">
       <div className="flex h-full flex-col px-4 py-4 lg:py-6">
-        <Link href="/workspace" className="flex w-fit items-center gap-2.5 rounded-lg px-2 py-1.5 outline-none focus-visible:ring-4 focus-visible:ring-[var(--focus)]" aria-label="BeWater workspace">
-          <Image src="/assets/brand/bee-drop-mark.svg" alt="" width={30} height={30} className="size-[30px] rounded-lg shadow-[0_4px_12px_rgba(49,95,114,.1)]"/>
-          <span className="brand-wordmark">BEWATER</span>
-        </Link>
+        <BrandSignature href="/workspace" label="BeWater workspace" size={30} className="w-fit rounded-lg px-2 py-1.5 outline-none focus-visible:ring-4 focus-visible:ring-[var(--focus)]"/>
         <nav className="mt-5 overflow-x-auto lg:mt-10 lg:overflow-visible" aria-label={t("workspaceLabel")}>
           <ul className="flex min-w-max gap-1 lg:block lg:min-w-0 lg:space-y-1">
             {navigation.map((item) => {

@@ -7,10 +7,11 @@ import { AssetActionPanel } from "./asset-action-panel";
 import { AssetCard } from "./asset-card";
 import { AssetDetail } from "./asset-detail";
 import { AssetTabs, type AssetTab } from "./asset-tabs";
-import { BeeObservationCard } from "./bee-observation-card";
+import { BeeObservationCard } from "@/components/ui/bee-observation-card";
 import { EmptyAssetState } from "./empty-asset-state";
 import { GrowthSummaryCard } from "./growth-summary-card";
 import { RelatedOrderList } from "./related-order-list";
+import {PageHeader, WorkspacePage} from "@/components/ui/workspace-page";
 
 export function BusinessAssetsPage({ data }: { data: BusinessAssetsData }) {
   const [activeTab, setActiveTab] = useState<AssetTab>("All");
@@ -37,22 +38,8 @@ export function BusinessAssetsPage({ data }: { data: BusinessAssetsData }) {
   }
 
   return (
-    <main className="min-h-dvh bg-[var(--canvas)] lg:ml-[224px]">
-      <div className="mx-auto w-full max-w-[1420px] px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
-        <header className="border-b border-[var(--line)] pb-7">
-          <p className="text-xs font-medium text-[var(--subtle)]">A workshop built from finished work</p>
-          <div className="mt-2 flex flex-wrap items-end justify-between gap-5">
-            <div>
-              <h1 className="text-[28px] font-semibold tracking-[-0.035em] text-[var(--ink)]">Business Assets</h1>
-              <p className="mt-2 max-w-[680px] text-sm leading-6 text-[var(--muted)]">
-                See the tools your business has earned through repetition—and how each one becomes easier to use again.
-              </p>
-            </div>
-            <div className="hidden items-center gap-2 text-[10px] uppercase tracking-[0.08em] text-[var(--subtle)] sm:flex">
-              <Hammer aria-hidden className="size-3.5" /> Real work → Repeat use → Business asset
-            </div>
-          </div>
-        </header>
+    <WorkspacePage maxWidth="1420px">
+        <PageHeader eyebrow="A workshop built from finished work" title="Business Assets" description="See the tools your business has earned through repetition—and how each one becomes easier to use again." aside={<div className="hidden items-center gap-2 text-[10px] uppercase tracking-[0.08em] text-[var(--subtle)] sm:flex"><Hammer aria-hidden className="size-3.5"/>Real work → Repeat use → Business asset</div>}/>
 
         {!data.assets.length ? <EmptyAssetState /> : (
           <div className="mt-8 grid items-start gap-7 xl:grid-cols-[minmax(0,1fr)_310px]">
@@ -104,15 +91,13 @@ export function BusinessAssetsPage({ data }: { data: BusinessAssetsData }) {
                   <p className="mt-3 border-t border-[var(--line)] pt-3 text-[9px] leading-4 text-[var(--subtle)]">Maturity advances from recorded reuse. It cannot be manually scored.</p>
                 </section>
               ) : null}
-              {data.beeObservation ? <BeeObservationCard observation={data.beeObservation} /> : null}
+              {data.beeObservation ? <BeeObservationCard observation={data.beeObservation} icon={Wrench} note="This comes from recorded reuse, not generated content."/> : null}
             </aside>
           </div>
         )}
-      </div>
-
       {selected && actionMode ? (
         <AssetActionPanel asset={selected} orders={data.availableOrders} mode={actionMode} onClose={() => setActionMode(undefined)} />
       ) : null}
-    </main>
+    </WorkspacePage>
   );
 }

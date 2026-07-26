@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import {BarChart3,BookOpen,BriefcaseBusiness} from "lucide-react";
+import {BrandSignature} from "@/components/brand/brand-signature";
 import {LanguageSwitcher} from "@/components/i18n/language-switcher";
 
 export function PrototypeHeader() {
-  return <header className="mx-auto flex max-w-[1120px] items-center justify-between px-5 py-5 sm:px-8"><Link href="/workspace" className="brand-signature"><Image src="/assets/brand/bee-drop-mark.svg" alt="" width={32} height={32} className="size-8 rounded-xl"/><span>Be Water</span></Link><LanguageSwitcher/></header>;
+  return <header className="prototype-global-header"><BrandSignature href="/workspace" size={34}/><nav><Link href="/services"><BriefcaseBusiness/>服务与案例</Link><Link href="/notebook"><BookOpen/>证据观察</Link><Link href="/growth"><BarChart3/>增长闭环</Link></nav><LanguageSwitcher/></header>;
 }

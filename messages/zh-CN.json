@@ -10,7 +10,7 @@
   "serviceAssets": {"eyebrow": "服务资产", "title": "从真实交付中留下的可复用材料", "description": "这些材料来自具体案例，可以继续被验证、调整并用于下一次服务。", "usage": "已复用 {count} 次"},
   "assetReuse": {"title": "从这项服务已经沉淀的资产中复用", "use": "用于本案例", "used": "已加入"},
   "deliveryRelations": {"fulfillsQuestion": "这份实际交付完成了哪些准备或计划？", "validatesQuestion": "这项客户结果验证了哪些实际交付？", "fulfillsCount": "完成 {count} 项计划", "validatesCount": "验证 {count} 项交付", "connected": "已连接 {count} 项"},
-  "deliveryWorkspace": {"statusEyebrow": "案例状态", "statusTitle": "这次经营正在怎样推进", "statusDescription": "成交、交付、付款与客户结果分别记录，避免一个状态掩盖真实进展。", "dimensions": {"commercial": "商业关系", "delivery": "交付进度", "payment": "付款状态", "outcome": "客户结果"}, "statuses": {"commercial": {"lead": "线索", "booked": "已预约", "confirmed": "已确认", "closed": "已完成", "cancelled": "已取消"}, "delivery": {"not_started": "未开始", "preparing": "准备中", "in_progress": "进行中", "delivered": "已交付", "accepted": "客户已接收"}, "payment": {"unknown": "暂不明确", "pending": "待付款", "partial": "部分付款", "paid": "已付款", "refunded": "已退款", "not_applicable": "不适用"}, "outcome": {"unknown": "尚未形成", "awaiting_feedback": "等待反馈", "reported": "客户已表达结果", "verified": "结果已验证"}}, "materialsEyebrow": "交付材料", "materialsTitle": "留下你为这次服务准备和交付的材料", "materialsDescription": "Bee 会区分客户输入、你的准备、实际交付与客户结果，不把不同性质的内容混在一起。", "addMaterial": "加入材料", "roleQuestion": "这份材料在服务中扮演什么角色？", "roles": {"client_input": "客户输入", "preparation": "服务准备", "planned_deliverable": "计划交付", "actual_deliverable": "实际交付", "customer_outcome": "客户结果", "reference": "参考材料"}, "titleLabel": "材料名称", "titlePlaceholder": "例如：崔怡模拟面试题", "fileLabel": "选择图片或文档（原型暂限 1.5MB）", "fileTooLarge": "文件超过 1.5MB。当前原型使用本地存储，请先选择更小的文件。", "linkLabel": "外部链接（可选）", "noteLabel": "补充说明或文本内容", "notePlaceholder": "留下原始内容即可，不需要提前总结。", "linkEvidence": "与哪些已发生的事实相关？（可选）", "linkedFacts": "已关联 {count} 条事实", "saveMaterial": "保存材料", "cancel": "取消", "open": "打开", "download": "下载", "promote": "沉淀为服务资产", "promoted": "已成为服务资产", "delete": "删除材料", "deleteTitle": "删除这份交付材料？", "deleteDescription": "材料及其与当前案例的关联会被移除；已经晋升的服务资产仍会保留。", "deleteConfirm": "删除材料", "materialsEmpty": "还没有交付材料。可以先放入客户简历、准备题目、交付文档或反馈。", "relationEyebrow": "交付关联", "relationTitle": "从计划，到实际交付，再到客户结果", "relationDescription": "Bee 会比较你原本准备什么、实际完成什么，以及客户最终感受到什么。", "phases": {"planned": "计划交付", "actual": "实际交付", "outcomes": "客户结果"}, "phaseEmpty": {"planned": "先加入准备材料或计划交付。", "actual": "交付事实或实际材料会出现在这里。", "outcomes": "客户反馈与结果信号会出现在这里。"}},
+  "deliveryWorkspace": {"statusEyebrow": "案例状态", "statusTitle": "这次经营正在怎样推进", "statusDescription": "成交、交付、付款与客户结果分别记录，避免一个状态掩盖真实进展。", "dimensions": {"commercial": "商业关系", "delivery": "交付进度", "payment": "付款状态", "outcome": "客户结果"}, "statuses": {"commercial": {"lead": "线索", "booked": "已预约", "confirmed": "已确认", "closed": "已完成", "cancelled": "已取消"}, "delivery": {"not_started": "未开始", "preparing": "准备中", "in_progress": "进行中", "delivered": "已交付", "accepted": "客户已接收"}, "payment": {"unknown": "暂不明确", "pending": "待付款", "partial": "部分付款", "paid": "已付款", "refunded": "已退款", "not_applicable": "不适用"}, "outcome": {"unknown": "尚未形成", "awaiting_feedback": "等待反馈", "reported": "客户已表达结果", "verified": "结果已验证"}}, "materialsEyebrow": "交付材料", "materialsTitle": "留下你为这次服务准备和交付的材料", "materialsDescription": "Bee 会区分客户输入、你的准备、实际交付与客户结果，不把不同性质的内容混在一起。", "addMaterial": "加入材料", "roleQuestion": "这份材料在服务中扮演什么角色？", "roles": {"client_input": "客户输入", "preparation": "服务准备", "planned_deliverable": "计划交付", "actual_deliverable": "实际交付", "customer_outcome": "客户结果", "reference": "参考材料"}, "titleLabel": "材料名称", "titlePlaceholder": "例如：小鱼模拟面试题", "fileLabel": "选择图片或文档（原型暂限 1.5MB）", "fileTooLarge": "文件超过 1.5MB。当前原型使用本地存储，请先选择更小的文件。", "linkLabel": "外部链接（可选）", "noteLabel": "补充说明或文本内容", "notePlaceholder": "留下原始内容即可，不需要提前总结。", "linkEvidence": "与哪些已发生的事实相关？（可选）", "linkedFacts": "已关联 {count} 条事实", "saveMaterial": "保存材料", "cancel": "取消", "open": "打开", "download": "下载", "promote": "沉淀为服务资产", "promoted": "已成为服务资产", "delete": "删除材料", "deleteTitle": "删除这份交付材料？", "deleteDescription": "材料及其与当前案例的关联会被移除；已经晋升的服务资产仍会保留。", "deleteConfirm": "删除材料", "materialsEmpty": "还没有交付材料。可以先放入客户简历、准备题目、交付文档或反馈。", "relationEyebrow": "交付关联", "relationTitle": "从计划，到实际交付，再到客户结果", "relationDescription": "Bee 会比较你原本准备什么、实际完成什么，以及客户最终感受到什么。", "phases": {"planned": "计划交付", "actual": "实际交付", "outcomes": "客户结果"}, "phaseEmpty": {"planned": "先加入准备材料或计划交付。", "actual": "交付事实或实际材料会出现在这里。", "outcomes": "客户反馈与结果信号会出现在这里。"}},
   "navigation": {"home": "首页", "coach": "教练", "journey": "路径", "insights": "洞察", "resources": "工作区", "today": "今日", "services": "服务", "cases": "案例", "reflection": "回望", "workspaceLabel": "工作区导航"},
   "home": {
     "brandLabel": "Be Water 首页",
@@ -19,11 +19,11 @@
     "hero": {
       "eyebrow": "真实经营驱动的增长 Agent",
       "titleLine1": "让每一次真实经营",
-      "titleLine2": "指导下一次增长。",
+      "titleLine2": "指导下一次获客。",
       "description": "Bee 会替你记住。",
-      "method": "Bee 从咨询、交付和客户反馈中学习你的生意，把反复出现的线索变成下一步值得验证的内容与跟进方向。",
-      "primaryAction": "让 Bee 开始学习",
-      "traceability": "Bee 基于真实经营形成的每项判断，都能回到原始记录。"
+      "method": "Bee 从咨询、交付和客户反馈中理解你的生意，把反复出现的线索变成本周最值得做的内容与跟进。",
+      "primaryAction": "让 Bee 看看我的经营",
+      "traceability": "每项判断都可以回到原始记录。"
     },
     "insight": {
       "sampleLabel": "示例 · Bee 如何形成判断",
@@ -35,24 +35,52 @@
         "feedback": {"quote": "“终于知道项目经历该怎么表达了。”", "source": "客户反馈"}
       },
       "judgmentLabel": "Bee 的归纳",
-      "judgment": "咨询中的困难与交付后的收获，都指向同一件事：客户真正需要的是项目表达。",
+      "judgment": "咨询中的困难与交付后的收获，都指向同一件事：客户真正需要的是<insight>项目表达</insight>。",
       "actionLabel": "增长行动",
-      "action": "将「模拟面试」表达为「项目表达诊断」，本周测试新的服务介绍。",
+      "action": "将「模拟面试」表达为「<target>项目表达诊断</target>」，本周测试新的服务介绍。",
       "opportunityLabel": "增长机会",
       "opportunity": "将「模拟面试」表达为「项目表达诊断」。",
       "realTitle": "真实工作正在留下线索。",
       "realEmphasis": "继续行动，判断会变得更清晰。",
-      "sampleNote": "留下真实记录后，Bee 会形成属于你的判断。",
+      "sampleNote": "Bee 会持续寻找更多证据，自动修正这个判断。",
       "todayAction": "查看今日行动",
       "metrics": {"positioning": "定位清晰度", "expression": "价值表达力", "attraction": "客户吸引力", "growth": "持续增长力"}
     },
     "flow": {"label": "流动", "sample": "待生成", "caption": "当前成长势能"},
     "memory": {"eyebrow": "经营记忆", "title": "经验会在这里留下来", "observation": "观察", "pattern": "模式", "principle": "原则", "unit": "条", "emptyState": "第一条线索，\n正在等你留下...", "sourceIntro": "Bee 会慢慢发现：", "sources": {"service": "服务", "case": "案例", "feedback": "客户反馈"}, "emptyDescription": "先留下事实。观察会自己出现。", "emptyAction": "记录我的案例", "observationState": "Bee 正在整理你留下的事实", "observationDescription": "已有 {evidence} 条事实进入经营记忆。再多一些真实经历，重复出现的线索就会浮现。", "patternState": "有些线索正在反复出现", "patternDescription": "Bee 已从真实记录中发现 {patterns} 个重复信号。", "openNotebook": "查看 Bee 的观察"},
+    "skill": {
+      "eyebrow": "直接用 · BEWATER SKILL",
+      "title": "让 Bee 在你工作的地方，持续理解经营。",
+      "description": "将 BeWater 作为 Skill 交给 Codex 或 WorkBuddy。直接粘贴客户聊天、会议记录和交付反馈，Bee 会整理事实、连接案例，并从长期记录中寻找反复出现的经营线索。",
+      "download": "下载 BeWater Skill",
+      "compatibility": "适用于 Codex / WorkBuddy",
+      "note": "无需先整理材料。一次发生是事实，反复出现才可能成为模式。",
+      "promptListLabel": "BeWater Skill 提示词示例",
+      "copy": "复制",
+      "copied": "已复制",
+      "copyLabel": "复制{name}提示词",
+      "prompts": {
+        "organize": {"label": "整理记录", "prompt": "帮我整理这段客户聊天，区分事实、经营事件和待确认状态"},
+        "diagnose": {"label": "分析经营", "prompt": "比较最近的案例，找出反复出现但还需要验证的经营线索"},
+        "distill": {"label": "沉淀经验", "prompt": "看看哪些交付动作已经可以整理成模板或 SOP"}
+      }
+    },
     "loop": {
       "eyebrow": "持续增长闭环",
-      "title": "Bee 会从结果中继续学习。",
+      "title": "Bee 的思考过程",
       "description": "你留下的执行结果，会成为下一轮判断的证据。",
-      "steps": {"records": "真实材料", "understanding": "经营理解", "value": "重复价值", "action": "增长行动", "return": "结果回流"}
+      "steps": {
+        "records": {"title": "真实材料", "description": "咨询、交付、反馈等一手经营记录"},
+        "understanding": {"title": "经营理解", "description": "Bee 理解内容，抽取关键信息与价值点"},
+        "action": {"title": "本周行动", "description": "生成最值得做的内容、跟进与增长建议"},
+        "result": {"title": "执行结果", "description": "记录执行后的反馈与经营变化"},
+        "adjustment": {"title": "下一轮调整", "description": "Bee 根据结果持续学习，更新下一轮判断"}
+      }
+    },
+    "stats": {
+      "label": "示例经营记忆规模",
+      "items": {"records": "经营记录", "feedback": "客户反馈", "patterns": "已识别模式", "actions": "本周建议", "validated": "成功验证"},
+      "units": {"records": "条", "feedback": "条", "patterns": "个", "actions": "条", "validated": "次"}
     },
     "workspace": {
       "eyebrow": "你的工作区",
