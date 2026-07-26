@@ -1870,10 +1870,11 @@ html[lang^="zh"] .services-page-head>div>span { margin-inline-start:.2em; }
   line-height: 1.58;
 }
 
-.brand-home .sample-insight-action p {
-  color: var(--home-title-dark);
-  font-family: var(--font-editorial);
-  font-size: 15px;
+.brand-home .sample-insight-content .sample-evidence-card p,
+.brand-home .sample-insight-content .sample-insight-row p {
+  color: var(--home-text);
+  font-family: inherit;
+  font-size: 13px;
 }
 
 .brand-home .semantic-highlight {
