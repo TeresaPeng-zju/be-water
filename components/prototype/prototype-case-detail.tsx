@@ -11,6 +11,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {CaseDeliveryWorkspace} from "./case-delivery-workspace";
 import {addPrototypeEvidence, applyPrototypeCaseStatusProposal, confirmPrototypeCustomerIdentity, deletePrototypeEvidence, getPrototypeCaseStatus, getPrototypeStages, isPresetStage, type EvidenceAttachment, type EvidenceType, type PrototypeEvidence, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeEvidence, useBusinessMemory} from "@/lib/prototype/business-memory";
 import type {RecordExtraction} from "@/lib/domain/business-record";
+import {prototypeLocale,prototypeUi} from "@/lib/prototype/ui-copy";
 
 const stageIcons: Record<EvidenceType, typeof MessageCircle> = {conversation:MessageCircle, quote:Quote, delivery:PackageCheck, feedback:StickyNote, note:StickyNote};
 
@@ -21,6 +22,7 @@ export function PrototypeCaseDetail({serviceId, caseId, returnTo = "service"}: {
   const deliveryT = useTranslations("deliveryWorkspace");
   const notebookT = useTranslations("notebookEntry");
   const locale = useLocale();
+  const caseUi = prototypeUi[prototypeLocale(locale)].caseStory;
   const model = useBusinessMemory();
   const service = model.services.find((entry) => entry.id === serviceId);
   const item = service?.cases.find((entry) => entry.id === caseId);
@@ -104,7 +106,7 @@ export function PrototypeCaseDetail({serviceId, caseId, returnTo = "service"}: {
   const businessEvents = item.evidence.flatMap((evidence) => (evidence.businessEvents ?? []).map((event) => ({...event,evidenceId:evidence.id})))
 
   return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell case-journey-shell">
-    <Link href={returnTo === "growth" ? "/growth" : `/services/${serviceId}`} className="prototype-back"><ArrowLeft className="size-4"/>{returnTo === "growth" ? "返回增长计划" : service.name}</Link>
+    <Link href={returnTo === "growth" ? "/growth" : `/services/${serviceId}`} className="prototype-back"><ArrowLeft className="size-4"/>{returnTo === "growth" ? caseUi[0] : service.name}</Link>
     <div className="prototype-page-head"><div><p className="prototype-eyebrow">{t("eyebrow")}</p><h1>{item.customer}</h1><span>{date}</span>{discoveryChannel || transactionChannel ? <div className="case-channel-facts">{discoveryChannel ? <small>{channelT("discoveredVia",{channel:channelLabel(discoveryChannel)})}</small> : null}{transactionChannel ? <small>{channelT("transactedVia",{channel:channelLabel(transactionChannel)})}</small> : null}</div> : null}</div></div>
 
     <section className="case-journey">
@@ -123,8 +125,8 @@ export function PrototypeCaseDetail({serviceId, caseId, returnTo = "service"}: {
     </section>
 
     {businessEvents.length ? <section className="case-storyline">
-      <div className="journey-heading"><p>完整经营旅程</p><h2>从咨询、预约到交付与反馈</h2><span>Bee 把不同材料中的经营事件按同一个客户串联起来，每一步都能回到原始记录。</span></div>
-      {customerEntity && customerEntity.identities.length > 1 ? <div className="case-identity-banner"><span>同一客户</span><strong>{customerEntity.identities.map((identity)=>`${identity.label}（${identity.source ?? "记录"}）`).join(" = ")}</strong><small>已归一为 {customerEntity.primaryName}</small></div>:null}
+      <div className="journey-heading"><p>{caseUi[1]}</p><h2>{caseUi[2]}</h2><span>{caseUi[3]}</span></div>
+      {customerEntity && customerEntity.identities.length > 1 ? <div className="case-identity-banner"><span>{caseUi[4]}</span><strong>{customerEntity.identities.map((identity)=>`${identity.label} (${identity.source ?? caseUi[5]})`).join(" = ")}</strong><small>{caseUi[6]} {customerEntity.primaryName}</small></div>:null}
       <ol>{businessEvents.map((event,index)=><li key={`${event.evidenceId}-${event.type}-${index}`}><i>{index+1}</i><div><small>{event.type.replaceAll("_"," ")}</small><h3>{event.title}</h3><p>{event.summary}</p>{event.evidence.length?<blockquote>“{event.evidence[0]}”</blockquote>:null}</div></li>)}</ol>
     </section>:null}
 

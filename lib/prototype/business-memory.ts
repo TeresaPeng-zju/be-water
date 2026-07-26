@@ -1,11 +1,14 @@
 "use client";
 
-import {useEffect, useSyncExternalStore} from "react";
+import {useEffect, useMemo, useSyncExternalStore} from "react";
+import {useLocale} from "next-intl";
 import type {BusinessEvent, IdentityCandidate, OutcomeClaim, RawSourceKind} from "@/lib/domain/business-event";
 import {isReusableServiceAssetRole, type CaseStatusProposal, type DeliveryMaterialFormat, type DeliveryMaterialRole, type PrototypeCaseStatus, type PrototypeDeliveryMaterial, type PrototypeDeliveryRelation, type PrototypeServiceAsset} from "@/lib/domain/delivery";
 import {interviewGrowthMock} from "@/lib/prototype/mock";
 import {createLocalJsonStore} from "@/lib/memory/local-store";
 import {createMemoryBundle, parseMemoryBundle, type MemoryBundle} from "@/lib/memory/bundle";
+import {localizeMockModel} from "@/lib/prototype/mock-localization";
+import {prototypeLocale} from "@/lib/prototype/ui-copy";
 
 export type EvidenceType = "conversation" | "quote" | "delivery" | "feedback" | "note";
 export type PricingMode = "session" | "hourly" | "package" | "retainer";
@@ -66,10 +69,11 @@ function writeModel(model: BusinessMemoryModel) {
 
 export function useBusinessMemory() {
   const model = useSyncExternalStore(subscribe, readModel, () => emptyModel);
+  const locale = prototypeLocale(useLocale());
   useEffect(() => {
     if (shouldSeedInterviewGrowthDemo(model)) seedInterviewGrowthDemo();
   },[model]);
-  return model;
+  return useMemo(() => localizeMockModel(model,locale),[locale,model]);
 }
 
 function isBusinessMemoryModel(value:unknown):value is BusinessMemoryModel {
@@ -92,8 +96,9 @@ export function isMockEnabled() {
 
 export function shouldSeedInterviewGrowthDemo(model:BusinessMemoryModel) {
   if (!isMockEnabled()) return false;
-  if (typeof window === "undefined") return !model.services.some((service) => service.id === "demo-service-interview");
-  return localStorage.getItem(mockVersionKey) !== String(interviewGrowthMock.version);
+  const demoMissing = !model.services.some((service) => service.id === "demo-service-interview");
+  if (typeof window === "undefined") return demoMissing;
+  return demoMissing || localStorage.getItem(mockVersionKey) !== String(interviewGrowthMock.version);
 }
 
 export function applyMockGrowthResults() {
@@ -106,6 +111,17 @@ export function updateGrowthAction(planId:string,actionId:string,input:Partial<P
   const model = readModel();
   const now = new Date().toISOString();
   writeModel({...model,growthPlans:(model.growthPlans ?? []).map((plan) => plan.id === planId ? {...plan,updatedAt:now,revision:undefined,actions:plan.actions.map((action) => action.id === actionId ? {...action,...input,updatedAt:now} : action)} : plan)});
+}
+
+export function markAllGrowthActionsExecuted(planId:string) {
+  const model = readModel();
+  const now = new Date().toISOString();
+  writeModel({...model,growthPlans:(model.growthPlans ?? []).map((plan) => plan.id === planId ? {
+    ...plan,
+    updatedAt:now,
+    revision:undefined,
+    actions:plan.actions.map((action) => action.status === "measured" ? action : {...action,status:"published",updatedAt:now}),
+  } : plan)});
 }
 
 export function reviseGrowthPlan(planId:string) {
