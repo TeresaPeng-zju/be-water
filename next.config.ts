@@ -3,8 +3,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  // Vinext's local worker does not provide the Cloudflare ASSETS binding.
-  // Serve public images directly instead of routing them through /_vinext/image.
+  // Serve public images directly; this also keeps the SSR function smaller.
   images: {
     unoptimized: true,
   },
