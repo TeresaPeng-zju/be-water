@@ -55,8 +55,8 @@ export function GrowthLoopPage() {
     <section className="growth-diagnosis">
       <div className="growth-section-label"><Sparkles/><span>有证据的增长诊断</span></div>
       <h2>{plan.diagnosisTitle}</h2><p>{plan.diagnosisBody}</p>
-      <div className="growth-evidence-grid">{plan.evidenceRefs.map((ref) => {const source=sourceMap.get(ref); return source ? <Link key={ref} href={`/services/${source.serviceId}/cases/${source.caseId}`}><small>{source.label}</small><blockquote>“{source.quote.slice(0,92)}{source.quote.length>92?"…":""}”</blockquote><span>查看原始记录 <ExternalLink/></span></Link> : null;})}</div>
-      {service ? <Link className="growth-case-link" href={`/services/${service.id}/cases/demo-case-yitiao`}>查看“一条 / 小鱼”完整案例<ArrowRight/></Link> : null}
+      <div className="growth-evidence-grid">{plan.evidenceRefs.map((ref) => {const source=sourceMap.get(ref); return source ? <Link key={ref} href={`/services/${source.serviceId}/cases/${source.caseId}?from=growth`}><small>{source.label}</small><blockquote>“{source.quote.slice(0,92)}{source.quote.length>92?"…":""}”</blockquote><span>查看原始记录 <ExternalLink/></span></Link> : null;})}</div>
+      {service ? <Link className="growth-case-link" href={`/services/${service.id}/cases/demo-case-yitiao?from=growth`}>查看“一条 / 小鱼”完整案例<ArrowRight/></Link> : null}
     </section>
 
     <section className="growth-actions-section">

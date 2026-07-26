@@ -14,7 +14,7 @@ import type {RecordExtraction} from "@/lib/domain/business-record";
 
 const stageIcons: Record<EvidenceType, typeof MessageCircle> = {conversation:MessageCircle, quote:Quote, delivery:PackageCheck, feedback:StickyNote, note:StickyNote};
 
-export function PrototypeCaseDetail({serviceId, caseId}: {serviceId: string; caseId: string}) {
+export function PrototypeCaseDetail({serviceId, caseId, returnTo = "service"}: {serviceId: string; caseId: string; returnTo?: "service" | "growth"}) {
   const t = useTranslations("prototype.case");
   const channelT = useTranslations("channels");
   const evidenceT = useTranslations("evidenceActions");
@@ -104,7 +104,7 @@ export function PrototypeCaseDetail({serviceId, caseId}: {serviceId: string; cas
   const businessEvents = item.evidence.flatMap((evidence) => (evidence.businessEvents ?? []).map((event) => ({...event,evidenceId:evidence.id})))
 
   return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell case-journey-shell">
-    <Link href={`/services/${serviceId}`} className="prototype-back"><ArrowLeft className="size-4"/>{service.name}</Link>
+    <Link href={returnTo === "growth" ? "/growth" : `/services/${serviceId}`} className="prototype-back"><ArrowLeft className="size-4"/>{returnTo === "growth" ? "返回增长计划" : service.name}</Link>
     <div className="prototype-page-head"><div><p className="prototype-eyebrow">{t("eyebrow")}</p><h1>{item.customer}</h1><span>{date}</span>{discoveryChannel || transactionChannel ? <div className="case-channel-facts">{discoveryChannel ? <small>{channelT("discoveredVia",{channel:channelLabel(discoveryChannel)})}</small> : null}{transactionChannel ? <small>{channelT("transactedVia",{channel:channelLabel(transactionChannel)})}</small> : null}</div> : null}</div></div>
 
     <section className="case-journey">
