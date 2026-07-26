@@ -4,6 +4,8 @@ import {useSyncExternalStore} from "react";
 import type {BusinessEvent, IdentityCandidate, OutcomeClaim, RawSourceKind} from "@/lib/domain/business-event";
 import {isReusableServiceAssetRole, type CaseStatusProposal, type DeliveryMaterialFormat, type DeliveryMaterialRole, type PrototypeCaseStatus, type PrototypeDeliveryMaterial, type PrototypeDeliveryRelation, type PrototypeServiceAsset} from "@/lib/domain/delivery";
 import {interviewGrowthMock} from "@/lib/prototype/mock";
+import {createLocalJsonStore} from "@/lib/memory/local-store";
+import {createMemoryBundle, parseMemoryBundle, type MemoryBundle} from "@/lib/memory/bundle";
 
 export type EvidenceType = "conversation" | "quote" | "delivery" | "feedback" | "note";
 export type PricingMode = "session" | "hourly" | "package" | "retainer";
@@ -49,34 +51,34 @@ export function normalizePrototypeStages(stages: PrototypeStage[]): PrototypeSta
 
 const storageKey = "bewater_business_memory_v1";
 const mockVersionKey = "bewater_interview_mock_version";
-const eventName = "bewater-business-memory-change";
 const emptyModel: BusinessMemoryModel = {services: []};
-let cachedRaw = "";
-let cachedModel = emptyModel;
+const memoryStore = createLocalJsonStore<BusinessMemoryModel>(storageKey,emptyModel);
 
 function readModel(): BusinessMemoryModel {
-  if (typeof window === "undefined") return emptyModel;
-  const raw = localStorage.getItem(storageKey) ?? "";
-  if (raw === cachedRaw) return cachedModel;
-  cachedRaw = raw;
-  try { cachedModel = raw ? JSON.parse(raw) as BusinessMemoryModel : emptyModel; }
-  catch { cachedModel = emptyModel; }
-  return cachedModel;
+  return memoryStore.read();
 }
 
-function subscribe(callback: () => void) {
-  window.addEventListener(eventName, callback);
-  window.addEventListener("storage", callback);
-  return () => { window.removeEventListener(eventName, callback); window.removeEventListener("storage", callback); };
-}
+const subscribe = memoryStore.subscribe;
 
 function writeModel(model: BusinessMemoryModel) {
-  localStorage.setItem(storageKey, JSON.stringify(model));
-  cachedRaw = "";
-  window.dispatchEvent(new Event(eventName));
+  memoryStore.write(model);
 }
 
 export function useBusinessMemory() { return useSyncExternalStore(subscribe, readModel, () => emptyModel); }
+
+function isBusinessMemoryModel(value:unknown):value is BusinessMemoryModel {
+  return Boolean(value && typeof value === "object" && Array.isArray((value as BusinessMemoryModel).services));
+}
+
+export function exportBusinessMemory():MemoryBundle<BusinessMemoryModel> {
+  return createMemoryBundle(readModel());
+}
+
+export function importBusinessMemory(value:unknown) {
+  const bundle = parseMemoryBundle(value,isBusinessMemoryModel);
+  writeModel(bundle.memory);
+  return bundle;
+}
 
 export function isMockEnabled() {
   return interviewGrowthMock.enabledByDefault;
