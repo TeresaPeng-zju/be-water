@@ -1,6 +1,4 @@
 <div align="center">
-  <img src="public/assets/brand/hero-logo-v2.png" alt="BeWater" width="360" />
-
   <h1>BeWater</h1>
 
   <p><strong>真实经营驱动的 AI 增长搭档</strong></p>
@@ -31,7 +29,6 @@ BeWater 是一套基于 WorkBuddy，面向个人销售、自由职业者与小�
 
 - [在线 Demo](http://c76e384e3a027f8f0c7a972e85e3e237.makers-preview.qcdntest.net/)
 - [Bilibili 演示视频](https://www.bilibili.com/video/BV13G3j6bEzC/)
-- [微信微盘演示视频](https://drive.weixin.qq.com/s?k=AJEAIQdfAAoNPMJj6IAZoADwZ-ADE)
 
 Demo 以“模拟面试”个人服务为例，展示从客户咨询、交付和反馈中发现“项目表达诊断”这一真实购买价值，并将判断转化为闲鱼、小红书和微信回访行动的完整过程。
 
@@ -228,9 +225,3 @@ BeWater 目前处于可交互原型阶段，已经实现：
 - 更多专业服务行业模板
 - 增长实验与结果验证
 - 桌面端本地数据库
-
-## 作者
-
-teresapeng（彭语心）
-
-如果 BeWater 的方向与你正在解决的问题相似，欢迎来交流和共建 👋
