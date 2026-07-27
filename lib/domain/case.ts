@@ -1,4 +1,6 @@
 import type { RecordExtraction } from "./business-record";
+import type { BusinessEvent, IdentityCandidate, OutcomeClaim } from "./business-event";
+import type { CaseStatusProposal, PrototypeCaseStatus } from "./delivery";
 
 export type CaseEvent = {
   id: string;
@@ -9,6 +11,12 @@ export type CaseEvent = {
   rawText: string;
   occurredAt: string;
   evidence: string[];
+  businessEvent?: BusinessEvent;
+  outcomeClaims?: OutcomeClaim[];
+  identityCandidates?: IdentityCandidate[];
+  caseStatusProposals?: CaseStatusProposal[];
+  extractionMode?: string;
+  extractionVersion?: string;
 };
 
 export type BusinessCase = {
@@ -29,6 +37,7 @@ export type BusinessCase = {
   createdAt: string;
   updatedAt: string;
   events: CaseEvent[];
+  status?: PrototypeCaseStatus;
 };
 
 export function factValue(extraction: RecordExtraction, type: string) {

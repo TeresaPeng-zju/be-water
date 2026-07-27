@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {BriefcaseBusiness, Files, Settings, Sun, Waypoints} from "lucide-react";
 import {useTranslations} from "next-intl";
-import {AccountMenu} from "@/components/auth/account-menu";
 import {BrandSignature} from "@/components/brand/brand-signature";
 import {LanguageSwitcher} from "@/components/i18n/language-switcher";
 import {cn} from "@/lib/utils";
@@ -36,7 +35,6 @@ export function WorkspaceSidebar({activeItem = "今日"}: {activeItem?: string})
       </div>
       <div className="fixed right-5 top-3 z-40 flex h-[42px] items-center gap-3 sm:right-8 lg:right-10">
         <LanguageSwitcher/>
-        <AccountMenu/>
       </div>
     </aside>
   );

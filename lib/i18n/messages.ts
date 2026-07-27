@@ -40,7 +40,6 @@ const zhCN: Record<string, string> = {
   "Workspace ready": "工作区已就绪",
   "You have something real to work from.": "你已经有了真实的经营起点。",
   "Your first service and this week’s commitment are in place. The workspace can now grow from your actual work—not assumptions.": "第一项服务和本周安排已经就位。工作区会从你的真实工作中成长，而不是依赖假设。",
-  "Preview mode is active. Add Supabase environment variables to persist these entries.": "当前为预览模式。配置 Supabase 环境变量后即可持久保存这些内容。",
   "What kind of service is it?": "这是什么类型的服务？",
   "What kind of work do you sell?": "你提供哪一类专业服务？",
   "What are you preparing to sell?": "你准备卖什么？",

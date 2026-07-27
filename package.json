@@ -14,8 +14,6 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.8.0",
-    "@supabase/supabase-js": "^2.78.0",
     "next": "15.5.21",
     "next-intl": "^4.13.2",
     "react": "19.2.7",

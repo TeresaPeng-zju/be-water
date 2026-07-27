@@ -125,7 +125,7 @@ function localExtraction(rawText: string, context?: RecordExtractionContext): Re
   };
 }
 
-function normalizeExtraction(value: Partial<RecordExtraction>): RecordExtraction {
+function normalizeExtraction(value: Partial<RecordExtraction>, context?: RecordExtractionContext): RecordExtraction {
   return {
     recordType: value.recordType ?? "other",
     detectedSourceKind: value.detectedSourceKind ?? "other",
@@ -151,7 +151,11 @@ function normalizeExtraction(value: Partial<RecordExtraction>): RecordExtraction
     scopeExceeded: value.scopeExceeded ?? null,
     isUrgent: value.isUrgent ?? null,
     confirmationQuestions: value.confirmationQuestions ?? [],
-    identityCandidates: value.identityCandidates ?? [],
+    identityCandidates: (value.identityCandidates ?? []).map((candidate) => ({
+      ...candidate,
+      proposedCustomerId: context?.customerId && candidate.proposedCustomerId ? context.customerId : null,
+      needsConfirmation: Boolean(context?.customerId && candidate.needsConfirmation),
+    })),
     businessEvents: value.businessEvents ?? [],
     outcomeClaims: value.outcomeClaims ?? [],
     caseStatusProposals: (value.caseStatusProposals ?? []).filter(validStatusProposal).slice(0,8),
@@ -184,7 +188,7 @@ export async function POST(request: Request) {
     const payload = await response.json();
     const content = payload.choices?.[0]?.message?.content;
     if (!content) throw new Error("DeepSeek returned empty content");
-    return NextResponse.json({ extraction: normalizeExtraction(JSON.parse(content)), mode: "deepseek", usage: payload.usage, promptVersion: extractionPromptVersion });
+    return NextResponse.json({ extraction: normalizeExtraction(JSON.parse(content), body.context), mode: "deepseek", usage: payload.usage, promptVersion: extractionPromptVersion });
   } catch (error) {
     console.error("Record extraction failed", error);
     if (fallbackBody) return NextResponse.json({extraction:localExtraction(fallbackBody.rawText,fallbackBody.context),mode:"local_fallback",promptVersion:extractionPromptVersion});
