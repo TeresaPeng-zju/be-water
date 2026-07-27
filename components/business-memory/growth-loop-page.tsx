@@ -4,9 +4,9 @@ import Link from "next/link";
 import {useState} from "react";
 import {useLocale} from "next-intl";
 import {ArrowRight,BarChart3,Check,ChevronDown,Clipboard,ExternalLink,Sparkles,Target} from "lucide-react";
-import {PrototypeHeader} from "./prototype-header";
-import {applyMockGrowthResults,createGrowthPlanFromEvidence,isMockEnabled,markAllGrowthActionsExecuted,reviseGrowthPlan,updateGrowthAction,useBusinessMemory,type GrowthAction,type GrowthMetrics} from "@/lib/prototype/business-memory";
-import {prototypeLocale,prototypeUi} from "@/lib/prototype/ui-copy";
+import {BusinessMemoryHeader} from "./business-memory-header";
+import {applyMockGrowthResults,createGrowthPlanFromEvidence,isMockEnabled,markAllGrowthActionsExecuted,reviseGrowthPlan,updateGrowthAction,useBusinessMemory,type GrowthAction,type GrowthMetrics} from "@/lib/business-memory/store";
+import {prototypeLocale,prototypeUi} from "@/lib/business-memory/ui-copy";
 const emptyMetrics:GrowthMetrics = {impressions:0,engagements:0,inquiries:0,bookings:0,sales:0,revenue:0};
 
 export function GrowthLoopPage() {
@@ -37,13 +37,13 @@ export function GrowthLoopPage() {
     setDraftMetrics(action.metrics ?? emptyMetrics);
   }
 
-  if (!plan) {const hasEvidence=model.services.some((entry)=>entry.cases.some((item)=>item.evidence.length));return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell growth-empty"><Sparkles/><h1>{mockOn?growth.emptyMock:growth.empty}</h1><p>{mockOn?growth.emptyMockBody:growth.emptyBody}</p>{!mockOn?<button className="prototype-primary" disabled={!hasEvidence} onClick={()=>createGrowthPlanFromEvidence()}>{hasEvidence?growth.create:growth.needEvidence}<ArrowRight/></button>:null}</section></main>;}
+  if (!plan) {const hasEvidence=model.services.some((entry)=>entry.cases.some((item)=>item.evidence.length));return <main className="prototype-canvas min-h-dvh"><BusinessMemoryHeader/><section className="prototype-shell growth-empty"><Sparkles/><h1>{mockOn?growth.emptyMock:growth.empty}</h1><p>{mockOn?growth.emptyMockBody:growth.emptyBody}</p>{!mockOn?<button className="prototype-primary" disabled={!hasEvidence} onClick={()=>createGrowthPlanFromEvidence()}>{hasEvidence?growth.create:growth.needEvidence}<ArrowRight/></button>:null}</section></main>;}
 
   const measuredCount = plan.actions.filter((action) => action.metrics).length;
   const allActionsExecuted = plan.actions.every((action) => action.status === "published" || action.status === "measured");
   const totals = plan.actions.reduce((sum,action) => ({impressions:sum.impressions+(action.metrics?.impressions ?? 0),inquiries:sum.inquiries+(action.metrics?.inquiries ?? 0),bookings:sum.bookings+(action.metrics?.bookings ?? 0),sales:sum.sales+(action.metrics?.sales ?? 0),revenue:sum.revenue+(action.metrics?.revenue ?? 0)}),{impressions:0,inquiries:0,bookings:0,sales:0,revenue:0});
 
-  return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell growth-shell">
+  return <main className="prototype-canvas min-h-dvh"><BusinessMemoryHeader/><section className="prototype-shell growth-shell">
     <header className="growth-head">
       <div><p className="prototype-eyebrow">BEE GROWTH LOOP</p><h1>{growth.title}</h1><span>{plan.objective}</span></div>
     </header>

@@ -1,1 +1,0 @@
-import { ServiceDetail } from "@/components/services/service-detail";import { WorkspaceSidebar } from "@/components/workspace/workspace-sidebar";export default async function Page({params}:{params:Promise<{serviceId:string}>}){const {serviceId}=await params;return <><WorkspaceSidebar activeItem="服务"/><ServiceDetail serviceId={serviceId}/></>}

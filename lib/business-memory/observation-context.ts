@@ -1,4 +1,5 @@
-import {getPrototypeCaseStatus, getPrototypeEffortMinutes, getPrototypePurchaseNumber, getPrototypeStages, getPrototypeTurnaroundDays, type BusinessMemoryModel, type PrototypeServiceChannel} from "./business-memory";
+import {getPrototypeCaseStatus, getPrototypeEffortMinutes, getPrototypePurchaseNumber, getPrototypeStages, getPrototypeTurnaroundDays} from "./store";
+import type {BusinessMemoryModel,PrototypeServiceChannel} from "./model";
 import type {BusinessObservationSnapshot} from "@/lib/domain/business-observation";
 
 const channelNames = {

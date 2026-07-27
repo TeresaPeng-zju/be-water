@@ -1,2 +1,2 @@
-import {PrototypeServices} from "@/components/prototype/prototype-services";
-export default function ServicesPrototypePage() { return <PrototypeServices/>; }
+import {ServicesPage} from "@/components/business-memory/services-page";
+export default function ServicesPrototypePage() { return <ServicesPage/>; }

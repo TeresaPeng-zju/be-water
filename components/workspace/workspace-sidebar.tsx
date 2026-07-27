@@ -9,9 +9,9 @@ import {cn} from "@/lib/utils";
 
 const navigation = [
   {key: "today", active: "今日", icon: Sun, href: "/workspace"},
-  {key: "services", active: "服务", icon: BriefcaseBusiness, href: "/workspace/services"},
-  {key: "cases", active: "案例", icon: Files, href: "/workspace/cases"},
-  {key: "reflection", active: "复盘", icon: Waypoints, href: "/workspace/review"}
+  {key: "services", active: "服务", icon: BriefcaseBusiness, href: "/services"},
+  {key: "cases", active: "案例", icon: Files, href: "/notebook"},
+  {key: "reflection", active: "复盘", icon: Waypoints, href: "/growth"}
 ] as const;
 
 export function WorkspaceSidebar({activeItem = "今日"}: {activeItem?: string}) {

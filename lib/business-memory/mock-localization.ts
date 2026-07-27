@@ -1,4 +1,4 @@
-import type {BusinessMemoryModel,GrowthAction,PrototypeEvidence} from "./business-memory";
+import type {BusinessMemoryModel,GrowthAction,PrototypeEvidence} from "./model";
 import type {PrototypeLocale} from "./ui-copy";
 
 const names:Record<string,[string,string]> = {

@@ -13,7 +13,7 @@ import {
   reusePrototypeServiceAsset,
   updatePrototypeCaseStatus,
   useBusinessMemory,
-} from "@/lib/prototype/business-memory";
+} from "@/lib/business-memory/store";
 import {
   commercialStatuses,
   deliveryMaterialRoles,

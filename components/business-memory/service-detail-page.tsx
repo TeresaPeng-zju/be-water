@@ -4,14 +4,14 @@ import Link from "next/link";
 import {useState} from "react";
 import {ArrowLeft, ArrowRight, Check, Library, Pencil, Plus, Trash2} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
-import {PrototypeHeader} from "./prototype-header";
+import {BusinessMemoryHeader} from "./business-memory-header";
 import {NotebookEntry} from "./notebook-entry";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {StageBuilder} from "./stage-builder";
 import {ServiceChannelEditor} from "./service-channel-editor";
-import {addPrototypeCase, deletePrototypeCase, getPrototypeCustomers, getPrototypeEffortMinutes, getPrototypePurchaseNumber, getPrototypeStages, getPrototypeTurnaroundDays, isPresetStage, type PrototypeCase, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeService, useBusinessMemory} from "@/lib/prototype/business-memory";
+import {addPrototypeCase, deletePrototypeCase, getPrototypeCustomers, getPrototypeEffortMinutes, getPrototypePurchaseNumber, getPrototypeStages, getPrototypeTurnaroundDays, isPresetStage, type PrototypeCase, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeService, useBusinessMemory} from "@/lib/business-memory/store";
 
-export function PrototypeServiceDetail({serviceId}: {serviceId: string}) {
+export function ServiceDetailPage({serviceId}: {serviceId: string}) {
   const t = useTranslations("prototype.service");
   const common = useTranslations("prototype.services");
   const caseT = useTranslations("prototype.case");
@@ -91,10 +91,10 @@ export function PrototypeServiceDetail({serviceId}: {serviceId: string}) {
     return days === 0 ? common("turnaround.sameDay") : common("turnaroundDays", {count: days});
   }
 
-  if (!service) return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell"><div className="prototype-empty"><h1>{t("notFound")}</h1><Link className="prototype-text-action" href="/services">{t("back")}<ArrowRight className="size-4"/></Link></div></section></main>;
+  if (!service) return <main className="prototype-canvas min-h-dvh"><BusinessMemoryHeader/><section className="prototype-shell"><div className="prototype-empty"><h1>{t("notFound")}</h1><Link className="prototype-text-action" href="/services">{t("back")}<ArrowRight className="size-4"/></Link></div></section></main>;
   const serviceEvidenceCount = service.cases.reduce((count,item) => count + item.evidence.length,0);
 
-  return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell">
+  return <main className="prototype-canvas min-h-dvh"><BusinessMemoryHeader/><section className="prototype-shell">
     <Link href="/services" className="prototype-back"><ArrowLeft className="size-4"/>{t("back")}</Link>
     <div className="prototype-page-head service-detail-head">
       <div><h1>{service.name}</h1><span>{service.pricingMode ? `${common(`pricing.${service.pricingMode}`)} · ¥${service.price ?? "—"} · ${effortLabel()} · ${turnaroundLabel()}` : t("legacyDescription")}</span><strong className="service-summary">{t("recentSummary", {count: service.cases.filter((item) => new Date(item.occurredAt ? `${item.occurredAt}T12:00:00` : item.createdAt).getTime() >= referenceTime - 30 * 24 * 60 * 60 * 1000).length})}</strong></div>

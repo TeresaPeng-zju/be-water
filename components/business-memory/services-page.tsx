@@ -4,13 +4,13 @@ import Link from "next/link";
 import {useState} from "react";
 import {ArrowRight, Check, Copy, GripVertical, Minus, MoreHorizontal, Pencil, Plus, Trash2} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
-import {PrototypeHeader} from "./prototype-header";
+import {BusinessMemoryHeader} from "./business-memory-header";
 import {StageBuilder} from "./stage-builder";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import ScrollStack, {ScrollStackItem} from "@/components/ui/scroll-stack";
 import {SpecularButton} from "@/components/ui/specular-button";
 import {ServiceChannelEditor} from "./service-channel-editor";
-import {addPrototypeService, defaultPrototypeStages, deletePrototypeService, duplicatePrototypeService, getPrototypeEffortMinutes, getPrototypeTurnaroundDays, isPresetStage, reorderPrototypeServices, type PricingMode, type PrototypeService, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeService, useBusinessMemory} from "@/lib/prototype/business-memory";
+import {addPrototypeService, defaultPrototypeStages, deletePrototypeService, duplicatePrototypeService, getPrototypeEffortMinutes, getPrototypeTurnaroundDays, isPresetStage, reorderServicesPage, type PricingMode, type PrototypeService, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeService, useBusinessMemory} from "@/lib/business-memory/store";
 
 const serviceSuggestions = ["careerPlanning", "resume", "interview", "aiConsulting"] as const;
 const pricingModes: PricingMode[] = ["session", "hourly", "package", "retainer"];
@@ -18,7 +18,7 @@ const prices = [200, 500, 1000, 2000];
 const effortPresets = [30, 60, 120, 240];
 const turnaroundPresets = [0, 3, 7, 14];
 
-export function PrototypeServices() {
+export function ServicesPage() {
   const t = useTranslations("prototype.services");
   const caseT = useTranslations("prototype.case");
   const stageT = useTranslations("stageBuilder");
@@ -99,7 +99,7 @@ export function PrototypeServices() {
   }
 
   return <main className="prototype-canvas min-h-dvh">
-    <PrototypeHeader/>
+    <BusinessMemoryHeader/>
     <section className="prototype-shell">
       <div className="prototype-page-head services-page-head">
         <div><h1>{t("title")}</h1><span>{t("description")}</span></div>
@@ -156,7 +156,7 @@ export function PrototypeServices() {
               onDragStart={() => setDraggingServiceId(service.id)}
               onDragEnd={() => setDraggingServiceId(null)}
               onDragOver={(event) => event.preventDefault()}
-              onDrop={() => {if (draggingServiceId) reorderPrototypeServices(draggingServiceId, service.id);}}
+              onDrop={() => {if (draggingServiceId) reorderServicesPage(draggingServiceId, service.id);}}
               title={t("dragHint")}
             >
               <Link href={`/services/${service.id}`} className="service-row-hit" aria-label={service.name}/>

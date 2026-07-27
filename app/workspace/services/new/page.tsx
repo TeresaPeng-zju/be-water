@@ -1,1 +1,0 @@
-import { ServiceCreator } from "@/components/services/service-creator";import { WorkspaceSidebar } from "@/components/workspace/workspace-sidebar";export default function Page(){return <><WorkspaceSidebar activeItem="服务"/><ServiceCreator/></>}

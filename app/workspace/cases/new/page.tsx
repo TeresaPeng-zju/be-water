@@ -1,1 +1,0 @@
-import { Suspense } from "react";import { CaseCreator } from "@/components/cases/case-creator";import { WorkspaceSidebar } from "@/components/workspace/workspace-sidebar";export default function Page(){return <><WorkspaceSidebar activeItem="案例"/><Suspense><CaseCreator/></Suspense></>}

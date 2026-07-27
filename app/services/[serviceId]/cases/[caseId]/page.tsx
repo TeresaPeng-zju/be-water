@@ -1,2 +1,2 @@
-import {PrototypeCaseDetail} from "@/components/prototype/prototype-case-detail";
-export default async function CasePrototypePage({params,searchParams}: {params: Promise<{serviceId: string; caseId: string}>;searchParams:Promise<{from?:string}>}) { const [{serviceId, caseId},{from}] = await Promise.all([params,searchParams]); return <PrototypeCaseDetail serviceId={serviceId} caseId={caseId} returnTo={from === "growth" ? "growth" : "service"}/>; }
+import {CaseDetailPage} from "@/components/business-memory/case-detail-page";
+export default async function CasePrototypePage({params,searchParams}: {params: Promise<{serviceId: string; caseId: string}>;searchParams:Promise<{from?:string}>}) { const [{serviceId, caseId},{from}] = await Promise.all([params,searchParams]); return <CaseDetailPage serviceId={serviceId} caseId={caseId} returnTo={from === "growth" ? "growth" : "service"}/>; }

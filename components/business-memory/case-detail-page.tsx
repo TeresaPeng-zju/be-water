@@ -5,17 +5,17 @@ import Link from "next/link";
 import {ChangeEvent, useState} from "react";
 import {ArrowLeft, Camera, Check, LoaderCircle, MessageCircle, PackageCheck, Plus, Quote, Sparkles, StickyNote, Trash2} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
-import {PrototypeHeader} from "./prototype-header";
+import {BusinessMemoryHeader} from "./business-memory-header";
 import {NotebookEntry} from "./notebook-entry";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {CaseDeliveryWorkspace} from "./case-delivery-workspace";
-import {addPrototypeEvidence, applyPrototypeCaseStatusProposal, confirmPrototypeCustomerIdentity, deletePrototypeEvidence, getPrototypeCaseStatus, getPrototypeStages, isPresetStage, type EvidenceAttachment, type EvidenceType, type PrototypeEvidence, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeEvidence, useBusinessMemory} from "@/lib/prototype/business-memory";
+import {addPrototypeEvidence, applyPrototypeCaseStatusProposal, confirmPrototypeCustomerIdentity, deletePrototypeEvidence, getPrototypeCaseStatus, getPrototypeStages, isPresetStage, type EvidenceAttachment, type EvidenceType, type PrototypeEvidence, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeEvidence, useBusinessMemory} from "@/lib/business-memory/store";
 import type {RecordExtraction} from "@/lib/domain/business-record";
-import {prototypeLocale,prototypeUi} from "@/lib/prototype/ui-copy";
+import {prototypeLocale,prototypeUi} from "@/lib/business-memory/ui-copy";
 
 const stageIcons: Record<EvidenceType, typeof MessageCircle> = {conversation:MessageCircle, quote:Quote, delivery:PackageCheck, feedback:StickyNote, note:StickyNote};
 
-export function PrototypeCaseDetail({serviceId, caseId, returnTo = "service"}: {serviceId: string; caseId: string; returnTo?: "service" | "growth"}) {
+export function CaseDetailPage({serviceId, caseId, returnTo = "service"}: {serviceId: string; caseId: string; returnTo?: "service" | "growth"}) {
   const t = useTranslations("prototype.case");
   const channelT = useTranslations("channels");
   const evidenceT = useTranslations("evidenceActions");
@@ -94,7 +94,7 @@ export function PrototypeCaseDetail({serviceId, caseId, returnTo = "service"}: {
   }
   function confirmDelete() {if (!pendingDelete) return; deletePrototypeEvidence(serviceId,caseId,pendingDelete.id); setPendingDelete(null);}
 
-  if (!service || !item) return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell"><div className="prototype-empty"><h1>{t("notFound")}</h1><Link className="prototype-text-action" href="/services">{t("services")}</Link></div></section></main>;
+  if (!service || !item) return <main className="prototype-canvas min-h-dvh"><BusinessMemoryHeader/><section className="prototype-shell"><div className="prototype-empty"><h1>{t("notFound")}</h1><Link className="prototype-text-action" href="/services">{t("services")}</Link></div></section></main>;
 
   const dateLocale = locale === "en" ? "en-US" : locale;
   const date = item.occurredAt ? new Intl.DateTimeFormat(dateLocale,{year:"numeric",month:"long",day:"numeric"}).format(new Date(`${item.occurredAt}T12:00:00`)) : item.summary || t("legacyCase");
@@ -105,7 +105,7 @@ export function PrototypeCaseDetail({serviceId, caseId, returnTo = "service"}: {
   const businessEventCount = item.evidence.reduce((count,evidence) => count + (evidence.businessEvents?.length ?? 0),0);
   const businessEvents = item.evidence.flatMap((evidence) => (evidence.businessEvents ?? []).map((event) => ({...event,evidenceId:evidence.id})))
 
-  return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell case-journey-shell">
+  return <main className="prototype-canvas min-h-dvh"><BusinessMemoryHeader/><section className="prototype-shell case-journey-shell">
     <Link href={returnTo === "growth" ? "/growth" : `/services/${serviceId}`} className="prototype-back"><ArrowLeft className="size-4"/>{returnTo === "growth" ? caseUi[0] : service.name}</Link>
     <div className="prototype-page-head"><div><p className="prototype-eyebrow">{t("eyebrow")}</p><h1>{item.customer}</h1><span>{date}</span>{discoveryChannel || transactionChannel ? <div className="case-channel-facts">{discoveryChannel ? <small>{channelT("discoveredVia",{channel:channelLabel(discoveryChannel)})}</small> : null}{transactionChannel ? <small>{channelT("transactedVia",{channel:channelLabel(transactionChannel)})}</small> : null}</div> : null}</div></div>
 

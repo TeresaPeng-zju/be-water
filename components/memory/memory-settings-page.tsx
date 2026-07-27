@@ -1,9 +1,9 @@
 "use client";
 
 import {useRef,useState,useSyncExternalStore,type ChangeEvent} from "react";
-import {Check,Database,Download,HardDrive,KeyRound,LockKeyhole,Upload} from "lucide-react";
-import {PrototypeHeader} from "@/components/prototype/prototype-header";
-import {exportBusinessMemory,importBusinessMemory,useBusinessMemory} from "@/lib/prototype/business-memory";
+import {Check,Database,Download,HardDrive,KeyRound,LockKeyhole,Upload,Users} from "lucide-react";
+import {BusinessMemoryHeader} from "@/components/business-memory/business-memory-header";
+import {exportBusinessMemory,importBusinessMemory,setWorkspaceKind,useBusinessMemory,useWorkspaceKind} from "@/lib/business-memory/store";
 import {defaultMemoryPreferences,memoryPreferencesStore,type MemoryMode,type MemoryPreferences,type ModelProvider} from "@/lib/memory/preferences";
 
 const modeOptions:{value:MemoryMode;title:string;description:string}[] = [
@@ -14,6 +14,7 @@ const modeOptions:{value:MemoryMode;title:string;description:string}[] = [
 
 export function MemorySettingsPage() {
   const model = useBusinessMemory();
+  const workspaceKind = useWorkspaceKind();
   const preferences = useSyncExternalStore(memoryPreferencesStore.subscribe,memoryPreferencesStore.read,()=>defaultMemoryPreferences);
   const inputRef = useRef<HTMLInputElement>(null);
   const [message,setMessage] = useState("");
@@ -50,10 +51,12 @@ export function MemorySettingsPage() {
     }
   }
 
-  return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell memory-settings-shell">
+  return <main className="prototype-canvas min-h-dvh"><BusinessMemoryHeader/><section className="prototype-shell memory-settings-shell">
     <header className="memory-settings-head"><p className="prototype-eyebrow">LOCAL-FIRST MEMORY</p><h1>你的经营记忆，首先属于你。</h1><span>原始材料、案例、证据与行动默认保存在当前设备。云端和外部模型只是可选能力。</span></header>
 
-    <section className="memory-status-card"><div className="memory-status-icon"><HardDrive/></div><div><small>当前存储位置</small><h2>这台设备 · 浏览器本地空间</h2><p>当前阶段使用本地浏览器存储；桌面版将复用同一接口切换至 SQLite。</p></div><strong><LockKeyhole/>未启用云同步</strong></section>
+    <section className="memory-status-card"><div className="memory-status-icon"><HardDrive/></div><div><small>当前存储位置</small><h2>这台设备 · 浏览器本地空间</h2><p>当前阶段使用本地浏览器存储；演示数据与个人经营数据使用互相独立的本地仓库。</p></div><strong><LockKeyhole/>未启用云同步</strong></section>
+
+    <section className="memory-settings-section"><div className="memory-section-head"><Users/><div><h2>当前工作区</h2><p>Demo 用于体验完整闭环；个人工作区从空白开始，不会自动写入演示客户或案例。</p></div></div><div className="memory-mode-grid">{([{value:"demo",title:"Demo 工作区",description:"使用独立的示例服务、客户、证据和增长结果，可随时体验。"},{value:"personal",title:"个人工作区",description:"只保存你导入或创建的真实经营资料，与 Demo 完全隔离。"}] as const).map((option)=><button key={option.value} className={workspaceKind===option.value?"is-selected":""} onClick={()=>{setWorkspaceKind(option.value);setMessage(`已切换到${option.title}`)}}><span>{workspaceKind===option.value?<Check/>:null}</span><strong>{option.title}</strong><small>{option.description}</small></button>)}</div></section>
 
     <div className="memory-stat-grid"><div><span>服务</span><strong>{model.services.length}</strong></div><div><span>案例</span><strong>{cases}</strong></div><div><span>证据</span><strong>{evidence}</strong></div><div><span>记忆体积</span><strong>{bytes<1024?`${bytes} B`:`${(bytes/1024).toFixed(1)} KB`}</strong></div></div>
 

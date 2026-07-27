@@ -2,7 +2,7 @@
 
 import {useState} from "react";
 import {GripVertical, Plus, Trash2, X} from "lucide-react";
-import {isPresetStage, type PrototypeStage} from "@/lib/prototype/business-memory";
+import {isPresetStage, type PrototypeStage} from "@/lib/business-memory/store";
 
 type StageBuilderProps = {
   stages: PrototypeStage[];

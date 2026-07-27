@@ -2,7 +2,7 @@
 
 import {Check, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
-import {type ChannelStatus, type PlatformType, type PrototypeServiceChannel} from "@/lib/prototype/business-memory";
+import {type ChannelStatus, type PlatformType, type PrototypeServiceChannel} from "@/lib/business-memory/store";
 
 const platforms: PlatformType[] = ["xianyu", "xiaohongshu", "zhishixingqiu", "wechat", "douyin", "offline", "other"];
 const statuses: ChannelStatus[] = ["testing", "active", "paused"];

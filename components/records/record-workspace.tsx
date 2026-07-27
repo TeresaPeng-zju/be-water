@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { RecordExtraction } from "@/lib/domain/business-record";
 import type { CaseStatusDimension } from "@/lib/domain/delivery";
-import {getPrototypeCaseStatus,saveWorkspaceExtraction,useBusinessMemory} from "@/lib/prototype/business-memory";
+import {getPrototypeCaseStatus,saveWorkspaceExtraction,useBusinessMemory} from "@/lib/business-memory/store";
 import { Button } from "@/components/ui/button";
 
 type Phase = "input" | "confirm" | "saved";

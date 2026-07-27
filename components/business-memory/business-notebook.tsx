@@ -5,13 +5,13 @@ import Link from "next/link";
 import {useEffect, useMemo, useState} from "react";
 import {ArrowLeft, ArrowRight, LoaderCircle} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
-import {PrototypeHeader} from "./prototype-header";
+import {BusinessMemoryHeader} from "./business-memory-header";
 import {MonthlyVolumeChart} from "./monthly-volume-chart";
-import {isMockEnabled, useBusinessMemory} from "@/lib/prototype/business-memory";
-import {interviewGrowthMock} from "@/lib/prototype/mock";
-import {buildBusinessObservationSnapshot, observationSourceLabels} from "@/lib/prototype/observation-context";
+import {isMockEnabled, useBusinessMemory} from "@/lib/business-memory/store";
+import {interviewGrowthMock} from "@/lib/business-memory/demo-data";
+import {buildBusinessObservationSnapshot, observationSourceLabels} from "@/lib/business-memory/observation-context";
 import type {BusinessObservationAnalysis, BusinessObservationSnapshot} from "@/lib/domain/business-observation";
-import {prototypeLocale,prototypeUi} from "@/lib/prototype/ui-copy";
+import {prototypeLocale,prototypeUi} from "@/lib/business-memory/ui-copy";
 
 const observationCachePrefix = "bewater_observation_analysis_v4:";
 const observationMemoryCache = new Map<string,BusinessObservationAnalysis>();
@@ -114,7 +114,7 @@ function sourceHref(snapshot:BusinessObservationSnapshot,ref:string) {
   return "/services";
 }
 
-export function PrototypeNotebook({focusServiceId,focusCaseId}:{focusServiceId?:string;focusCaseId?:string}) {
+export function BusinessNotebook({focusServiceId,focusCaseId}:{focusServiceId?:string;focusCaseId?:string}) {
   const t = useTranslations("prototype.notebook");
   const contextT = useTranslations("notebookContext");
   const locale = useLocale();
@@ -167,7 +167,7 @@ export function PrototypeNotebook({focusServiceId,focusCaseId}:{focusServiceId?:
     return () => {active = false;};
   },[cacheKey,evidence.length,focusServiceId,requestLocale,signature,snapshot]);
 
-  return <main className="prototype-canvas min-h-dvh"><PrototypeHeader/><section className="prototype-shell notebook-shell">
+  return <main className="prototype-canvas min-h-dvh"><BusinessMemoryHeader/><section className="prototype-shell notebook-shell">
     <div className="prototype-page-head"><div><h1>{t("title")}</h1><span>{t("description")}</span></div></div>
     {focusService ? <section id="context" className="notebook-context">
       <Link href={focusCase ? `/services/${focusService.id}/cases/${focusCase.id}` : `/services/${focusService.id}`}><ArrowLeft/>{contextT("back")}</Link>

@@ -1,0 +1,23 @@
+import type {BusinessEvent,IdentityCandidate,OutcomeClaim,RawSourceKind} from "@/lib/domain/business-event";
+import type {CaseStatusProposal,PrototypeCaseStatus,PrototypeDeliveryMaterial,PrototypeServiceAsset} from "@/lib/domain/delivery";
+
+export type EvidenceType = "conversation" | "quote" | "delivery" | "feedback" | "note";
+export type PricingMode = "session" | "hourly" | "package" | "retainer";
+export type PlatformType = "xiaohongshu" | "xianyu" | "zhishixingqiu" | "wechat" | "douyin" | "offline" | "other";
+export type ChannelStatus = "testing" | "active" | "paused";
+export type PrototypeServiceChannel = {id:string;platform:PlatformType;customName?:string;launchedAt?:string;status:ChannelStatus};
+export type PrototypeStage = {id:string;type:EvidenceType;label?:string;origin?:"preset"|"custom"};
+export type EvidenceAttachment = {name:string;dataUrl:string};
+export type PrototypeExtractedFact = {label:string;value:string;confidence?:number};
+export type PrototypeEvidence = {id:string;type:EvidenceType;stageId?:string;content:string;createdAt:string;amount?:number;attachment?:EvidenceAttachment;extractionStatus?:"processing"|"ready"|"failed";extractionSummary?:string;extractedFacts?:PrototypeExtractedFact[];detectedSourceKind?:RawSourceKind;sourceHintConflict?:boolean;identityCandidates?:IdentityCandidate[];businessEvents?:BusinessEvent[];outcomeClaims?:OutcomeClaim[];caseStatusProposals?:CaseStatusProposal[];extractionVersion?:string};
+export type PrototypeCase = {id:string;customer:string;customerId?:string;purchaseNumber?:number;discoveryChannelId?:string;transactionChannelId?:string;discoveryChannel?:PrototypeServiceChannel;transactionChannel?:PrototypeServiceChannel;summary?:string;occurredAt?:string;createdAt:string;status:PrototypeCaseStatus;stages?:PrototypeStage[];materials?:PrototypeDeliveryMaterial[];evidence:PrototypeEvidence[]};
+export type PrototypeService = {id:string;name:string;description?:string;pricingMode?:PricingMode;price?:number;effortMinutes?:number;effort?:string;turnaroundDays?:number;turnaround?:string;channels?:PrototypeServiceChannel[];stages?:PrototypeStage[];assets?:PrototypeServiceAsset[];createdAt:string;updatedAt?:string;cases:PrototypeCase[]};
+export type PrototypeCustomerIdentity = {id:string;label:string;source?:string;normalizedLabel:string;confirmed:boolean;createdAt:string};
+export type PrototypeCustomerEntity = {id:string;primaryName:string;identities:PrototypeCustomerIdentity[];createdAt:string;updatedAt:string};
+export type GrowthActionChannel = "xianyu"|"xiaohongshu"|"wechat";
+export type GrowthActionStatus = "planned"|"ready"|"published"|"measured";
+export type GrowthMetrics = {impressions:number;engagements:number;inquiries:number;bookings:number;sales:number;revenue:number};
+export type GrowthAction = {id:string;title:string;channel:GrowthActionChannel;reason:string;goal:string;dueDate:string;successMetric:string;status:GrowthActionStatus;assetTitle:string;assetContent:string;evidenceRefs:string[];metrics?:GrowthMetrics;resultNote?:string;updatedAt:string};
+export type GrowthPlan = {id:string;serviceId:string;weekOf:string;objective:string;diagnosisTitle:string;diagnosisBody:string;evidenceRefs:string[];actions:GrowthAction[];revision?:{summary:string;continueActionIds:string[];adjustments:string[];nextActions:string[];generatedAt:string};createdAt:string;updatedAt:string};
+export type BusinessMemoryModel = {services:PrototypeService[];customers?:PrototypeCustomerEntity[];growthPlans?:GrowthPlan[]};
+export type PrototypeCustomerHistory = {id:string;name:string;purchases:{caseId:string;serviceId:string;serviceName:string;occurredAt?:string;createdAt:string}[]};
