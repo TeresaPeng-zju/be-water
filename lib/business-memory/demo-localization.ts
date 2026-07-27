@@ -1,5 +1,5 @@
-import type {BusinessMemoryModel,GrowthAction,PrototypeEvidence} from "./model";
-import type {PrototypeLocale} from "./ui-copy";
+import type {BusinessMemoryModel,GrowthAction,BusinessEvidence} from "./model";
+import type {SupportedLocale} from "./ui-copy";
 
 const names:Record<string,[string,string]> = {
   "一条":["一條","Yitiao"],"小鱼":["小魚","Xiaoyu"],"林言":["林言","Lin Yan"],"周然":["周然","Zhou Ran"],"陈默":["陳默","Chen Mo"],"苏晴":["蘇晴","Su Qing"],"方屿":["方嶼","Fang Yu"],"许澄":["許澄","Xu Cheng"],"小满":["小滿","Xiaoman"],"阿树":["阿樹","Ashu"],"七喜":["七喜","Qixi"],"南风":["南風","Nanfeng"],
@@ -52,17 +52,17 @@ const actionTw:Record<string,Partial<GrowthAction>>={
   "demo-action-wechat":{title:"回訪老客戶並邀請轉介紹",reason:"已完成服務的客戶最清楚交付價值，也能補充真實面試結果。",goal:"獲得結果回饋或轉介紹",successMetric:"完成 3 次回訪，獲得 1 個轉介紹",assetTitle:"模擬面試後續回訪",assetContent:"嗨，最近面試進展怎麼樣？上次我們重點梳理了專案貢獻和結果表達，想了解哪些部分在真實面試裡最有幫助。\n\n如果身邊也有人遇到「專案做過但講不清」的問題，也歡迎把這項診斷分享給他。"},
 };
 
-function translatedEvidence(entry:PrototypeEvidence,locale:PrototypeLocale):PrototypeEvidence {
+function translatedEvidence(entry:BusinessEvidence,locale:SupportedLocale):BusinessEvidence {
   const translated=(locale==="en-US"?evidenceEn:evidenceTw)[entry.id];
   if (!translated) return entry;
   const eventNames=locale==="en-US"?{lead_created:"Inquiry received",booking_confirmed:"Booking confirmed",delivery_started:"Delivery started",delivery_completed:"Delivery completed",feedback_received:"Feedback received"}:{lead_created:"收到諮詢",booking_confirmed:"確認預約",delivery_started:"開始交付",delivery_completed:"完成交付",feedback_received:"收到回饋"};
   return {...entry,content:translated.content,extractionSummary:translated.summary,identityCandidates:entry.identityCandidates?.map((item)=>({...item,displayName:localName(item.displayName,locale),source:localSource(item.source,locale) ?? null,evidence:translated.snippets[0]})),businessEvents:entry.businessEvents?.map((event)=>({...event,title:eventNames[event.type as keyof typeof eventNames] ?? (locale==="en-US"?"Business event":"經營事件"),summary:translated.summary,evidence:translated.snippets,nextActions:event.nextActions.length?[locale==="en-US"?"Continue with the next confirmed step":"繼續下一個已確認步驟"]:[]})),outcomeClaims:entry.outcomeClaims?.map((claim)=>({...claim,theme:locale==="en-US"?"Project storytelling":"專案表達",statement:translated.summary,evidence:translated.snippets[0]}))};
 }
 
-function localName(value:string,locale:PrototypeLocale){return locale==="zh-CN"?value:(names[value]?.[locale==="en-US"?1:0]??value);}
-function localSource(value:string|null|undefined,locale:PrototypeLocale){if(!value||locale==="zh-CN")return value;return sources[value]?.[locale==="en-US"?1:0]??value;}
+function localName(value:string,locale:SupportedLocale){return locale==="zh-CN"?value:(names[value]?.[locale==="en-US"?1:0]??value);}
+function localSource(value:string|null|undefined,locale:SupportedLocale){if(!value||locale==="zh-CN")return value;return sources[value]?.[locale==="en-US"?1:0]??value;}
 
-export function localizeMockModel(model:BusinessMemoryModel,locale:PrototypeLocale):BusinessMemoryModel {
+export function localizeDemoModel(model:BusinessMemoryModel,locale:SupportedLocale):BusinessMemoryModel {
   if(locale==="zh-CN"||!model.services.some((service)=>service.id.startsWith("demo-service-"))) return model;
   const en=locale==="en-US";
   const actions=en?actionEn:actionTw;

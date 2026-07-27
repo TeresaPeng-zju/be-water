@@ -2,12 +2,12 @@
 
 import {useState} from "react";
 import {GripVertical, Plus, Trash2, X} from "lucide-react";
-import {isPresetStage, type PrototypeStage} from "@/lib/business-memory/store";
+import {isPresetStage, type ServiceStage} from "@/lib/business-memory/store";
 
 type StageBuilderProps = {
-  stages: PrototypeStage[];
-  onChange: (stages: PrototypeStage[]) => void;
-  getLabel: (stage: PrototypeStage) => string;
+  stages: ServiceStage[];
+  onChange: (stages: ServiceStage[]) => void;
+  getLabel: (stage: ServiceStage) => string;
   addLabel: string;
   addTypeLabel: string;
   addNameLabel: string;

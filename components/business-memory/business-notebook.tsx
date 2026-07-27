@@ -7,11 +7,11 @@ import {ArrowLeft, ArrowRight, LoaderCircle} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
 import {BusinessMemoryHeader} from "./business-memory-header";
 import {MonthlyVolumeChart} from "./monthly-volume-chart";
-import {isMockEnabled, useBusinessMemory} from "@/lib/business-memory/store";
-import {interviewGrowthMock} from "@/lib/business-memory/demo-data";
+import {isDemoEnabled, useBusinessMemory} from "@/lib/business-memory/store";
+import {interviewGrowthDemo} from "@/lib/business-memory/demo-data";
 import {buildBusinessObservationSnapshot, observationSourceLabels} from "@/lib/business-memory/observation-context";
 import type {BusinessObservationAnalysis, BusinessObservationSnapshot} from "@/lib/domain/business-observation";
-import {prototypeLocale,prototypeUi} from "@/lib/business-memory/ui-copy";
+import {resolveLocale,businessMemoryUi} from "@/lib/business-memory/ui-copy";
 
 const observationCachePrefix = "bewater_observation_analysis_v4:";
 const observationMemoryCache = new Map<string,BusinessObservationAnalysis>();
@@ -97,7 +97,7 @@ function mockObservationAnalysis(serviceId?:string,locale:string="zh-CN"):Busine
     if (serviceId && traditionalMockAnalyses[serviceId]) return traditionalMockAnalyses[serviceId];
     return {summary:"Bee 已比較模擬面試與履歷優化的真實諮詢、交付、回饋和結果記錄。兩項服務都出現了可繼續驗證的客戶價值線索。",observations:Object.values(traditionalMockAnalyses).flatMap((item) => item.observations)};
   }
-  const analyses = interviewGrowthMock.notebookAnalyses as Record<string,BusinessObservationAnalysis>;
+  const analyses = interviewGrowthDemo.notebookAnalyses as Record<string,BusinessObservationAnalysis>;
   if (serviceId && analyses[serviceId]) return analyses[serviceId];
   const serviceAnalyses = Object.values(analyses);
   return {
@@ -118,11 +118,11 @@ export function BusinessNotebook({focusServiceId,focusCaseId}:{focusServiceId?:s
   const t = useTranslations("prototype.notebook");
   const contextT = useTranslations("notebookContext");
   const locale = useLocale();
-  const ui = prototypeUi[prototypeLocale(locale)];
+  const ui = businessMemoryUi[resolveLocale(locale)];
   const model = useBusinessMemory();
   const cases = model.services.flatMap((service) => service.cases);
   const evidence = cases.flatMap((item) => item.evidence);
-  const requestLocale = prototypeLocale(locale);
+  const requestLocale = resolveLocale(locale);
   const snapshot = useMemo(() => buildBusinessObservationSnapshot(model,requestLocale),[model,requestLocale]);
   const sourceLabels = useMemo(() => observationSourceLabels(snapshot),[snapshot]);
   const signature = useMemo(() => JSON.stringify({requestLocale,monthlyTransactions:snapshot.monthlyTransactions,services:snapshot.services}),[requestLocale,snapshot]);
@@ -154,7 +154,7 @@ export function BusinessNotebook({focusServiceId,focusCaseId}:{focusServiceId?:s
     queueMicrotask(() => setAnalysisState("loading"));
     let request = observationRequests.get(cacheKey);
     if (!request) {
-      request = isMockEnabled()
+      request = isDemoEnabled()
         ? new Promise<BusinessObservationAnalysis>((resolve) => window.setTimeout(() => resolve(mockObservationAnalysis(focusServiceId,requestLocale)),3_000))
         : fetch("/api/observations/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({locale:requestLocale,snapshot})})
           .then(async (response) => {if (!response.ok) throw new Error("Observation failed"); return response.json() as Promise<{analysis:BusinessObservationAnalysis}>;})

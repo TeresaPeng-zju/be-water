@@ -1,5 +1,5 @@
-import {getPrototypeCaseStatus, getPrototypeEffortMinutes, getPrototypePurchaseNumber, getPrototypeStages, getPrototypeTurnaroundDays} from "./store";
-import type {BusinessMemoryModel,PrototypeServiceChannel} from "./model";
+import {getCaseStatus, getServiceEffortMinutes, getPurchaseNumber, getServiceStages, getServiceTurnaroundDays} from "./store";
+import type {BusinessMemoryModel,ServiceChannel} from "./model";
 import type {BusinessObservationSnapshot} from "@/lib/domain/business-observation";
 
 const channelNames = {
@@ -36,7 +36,7 @@ function localizedCustomerName(name:string,locale:keyof typeof channelNames) {
   return demoCustomerNames[name]?.[locale] ?? name;
 }
 
-function channelName(channel?: PrototypeServiceChannel, locale: keyof typeof channelNames = "zh-CN") {
+function channelName(channel?: ServiceChannel, locale: keyof typeof channelNames = "zh-CN") {
   if (!channel) return null;
   return channel.platform === "other" ? channel.customName || channelNames[locale].other : channelNames[locale][channel.platform];
 }
@@ -64,24 +64,24 @@ export function buildBusinessObservationSnapshot(model: BusinessMemoryModel, loc
       name:localizedServiceName(service.id,service.name,locale),
       pricingMode:service.pricingMode ?? null,
       serviceListPrice:service.price ?? null,
-      effortMinutes:getPrototypeEffortMinutes(service) ?? null,
-      turnaroundDays:getPrototypeTurnaroundDays(service) ?? null,
+      effortMinutes:getServiceEffortMinutes(service) ?? null,
+      turnaroundDays:getServiceTurnaroundDays(service) ?? null,
       channels:(service.channels ?? []).map((channel) => ({ref:`channel:${service.id}:${channel.id}`,label:channelName(channel,locale) ?? channel.platform,platform:channel.platform,launchedAt:channel.launchedAt ?? null,status:channel.status})),
-      stages:getPrototypeStages(service).map((stage) => ({ref:`stage:${service.id}:${stage.id}`,label:stage.label || stage.type,type:stage.type})),
+      stages:getServiceStages(service).map((stage) => ({ref:`stage:${service.id}:${stage.id}`,label:stage.label || stage.type,type:stage.type})),
       assets:(service.assets ?? []).map((asset) => ({ref:`asset:${asset.id}`,label:asset.title,role:asset.role,format:asset.format,content:asset.content?.slice(0,5000) ?? null,sourceCaseRef:`case:${asset.sourceCaseId}`,sourceMaterialRef:`material:${asset.sourceMaterialId}`})),
       cases:service.cases.slice(-60).map((item) => {
         const discovery = item.discoveryChannel ?? service.channels?.find((channel) => channel.id === item.discoveryChannelId);
         const transaction = item.transactionChannel ?? service.channels?.find((channel) => channel.id === item.transactionChannelId);
-        const stages = getPrototypeStages(item.stages?.length ? {stages:item.stages} : service);
+        const stages = getServiceStages(item.stages?.length ? {stages:item.stages} : service);
         return {
           ref:`case:${item.id}`,
           label:`${localizedServiceName(service.id,service.name,locale)} · ${localizedCustomerName(item.customer,locale)} · ${item.occurredAt ?? item.createdAt.slice(0,10)}`,
           customerName:localizedCustomerName(item.customer,locale),
           customerRef:item.customerId || `name:${item.customer.trim().toLocaleLowerCase()}`,
           customerIdentities:model.customers?.find((customer) => customer.id === item.customerId)?.identities.map((identity) => identity.label) ?? [item.customer],
-          purchaseNumber:getPrototypePurchaseNumber(model,item),
+          purchaseNumber:getPurchaseNumber(model,item),
           occurredAt:item.occurredAt ?? null,
-          status:getPrototypeCaseStatus(item),
+          status:getCaseStatus(item),
           discoveryChannel:channelName(discovery,locale),
           transactionChannel:channelName(transaction,locale),
           materials:(item.materials ?? []).map((material) => ({ref:`material:${material.id}`,label:`${item.customer} · ${material.title}`,role:material.role,format:material.format,content:material.content?.slice(0,5000) ?? null,linkedEvidenceRefs:material.linkedEvidenceIds.map((id) => `evidence:${id}`),fulfillsMaterialRefs:(material.fulfillsMaterialIds ?? []).map((id) => `material:${id}`),validatesMaterialRefs:(material.validatesMaterialIds ?? []).map((id) => `material:${id}`),serviceAssetRef:material.promotedAssetId ? `asset:${material.promotedAssetId}` : null})),

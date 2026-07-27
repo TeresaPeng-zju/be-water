@@ -9,7 +9,7 @@ import {NotebookEntry} from "./notebook-entry";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {StageBuilder} from "./stage-builder";
 import {ServiceChannelEditor} from "./service-channel-editor";
-import {addPrototypeCase, deletePrototypeCase, getPrototypeCustomers, getPrototypeEffortMinutes, getPrototypePurchaseNumber, getPrototypeStages, getPrototypeTurnaroundDays, isPresetStage, type PrototypeCase, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeService, useBusinessMemory} from "@/lib/business-memory/store";
+import {addCase, deleteCase, getCustomers, getServiceEffortMinutes, getPurchaseNumber, getServiceStages, getServiceTurnaroundDays, isPresetStage, type ServiceCase, type ServiceChannel, type ServiceStage, updateService, useBusinessMemory} from "@/lib/business-memory/store";
 
 export function ServiceDetailPage({serviceId}: {serviceId: string}) {
   const t = useTranslations("prototype.service");
@@ -33,13 +33,13 @@ export function ServiceDetailPage({serviceId}: {serviceId: string}) {
   const [discoveryChannelId, setDiscoveryChannelId] = useState("");
   const [transactionChannelId, setTransactionChannelId] = useState("");
   const [editingChannels, setEditingChannels] = useState(false);
-  const [draftChannels, setDraftChannels] = useState<PrototypeServiceChannel[]>([]);
+  const [draftChannels, setDraftChannels] = useState<ServiceChannel[]>([]);
   const [editingStages, setEditingStages] = useState(false);
-  const [draftStages, setDraftStages] = useState<PrototypeStage[]>([]);
-  const [pendingDeleteCase, setPendingDeleteCase] = useState<PrototypeCase | null>(null);
+  const [draftStages, setDraftStages] = useState<ServiceStage[]>([]);
+  const [pendingDeleteCase, setPendingDeleteCase] = useState<ServiceCase | null>(null);
   const [referenceTime] = useState(() => Date.now());
 
-  const customerHistories = getPrototypeCustomers(model);
+  const customerHistories = getCustomers(model);
   const normalizedCustomer = customer.trim().toLocaleLowerCase();
   const matchingCustomers = normalizedCustomer ? customerHistories.filter((entry) => entry.name.toLocaleLowerCase().includes(normalizedCustomer)).slice(0,4) : [];
   const exactCustomers = customerHistories.filter((entry) => entry.name.trim().toLocaleLowerCase() === normalizedCustomer);
@@ -50,33 +50,33 @@ export function ServiceDetailPage({serviceId}: {serviceId: string}) {
     if (step === 0 && customer.trim()) setStep(1);
     else if (step === 1 && occurredAt) {
       if ((service?.channels?.length ?? 0) > 1) setStep(2);
-      else {const channel = service?.channels?.[0]; addPrototypeCase(serviceId, customer, occurredAt, selectedCustomer?.id, {discoveryChannel:channel, transactionChannel:channel}); reset();}
-    } else if (step === 2 && discoveryChannelId) {const discoveryChannel = service?.channels?.find((channel) => channel.id === discoveryChannelId); const transactionChannel = service?.channels?.find((channel) => channel.id === (transactionChannelId || discoveryChannelId)); addPrototypeCase(serviceId, customer, occurredAt, selectedCustomer?.id, {discoveryChannel, transactionChannel}); reset();}
+      else {const channel = service?.channels?.[0]; addCase(serviceId, customer, occurredAt, selectedCustomer?.id, {discoveryChannel:channel, transactionChannel:channel}); reset();}
+    } else if (step === 2 && discoveryChannelId) {const discoveryChannel = service?.channels?.find((channel) => channel.id === discoveryChannelId); const transactionChannel = service?.channels?.find((channel) => channel.id === (transactionChannelId || discoveryChannelId)); addCase(serviceId, customer, occurredAt, selectedCustomer?.id, {discoveryChannel, transactionChannel}); reset();}
   }
 
-  function channelLabel(channel: PrototypeServiceChannel) {return channel.platform === "other" ? channel.customName || channelT("platforms.other") : channelT(`platforms.${channel.platform}`);}
+  function channelLabel(channel: ServiceChannel) {return channel.platform === "other" ? channel.customName || channelT("platforms.other") : channelT(`platforms.${channel.platform}`);}
   function beginChannelEdit() {setDraftChannels((service?.channels ?? []).map((channel) => ({...channel}))); setEditingChannels(true);}
-  function saveChannels() {if (draftChannels.some((channel) => channel.platform === "other" && !channel.customName?.trim())) return; updatePrototypeService(serviceId,{channels:draftChannels}); setEditingChannels(false);}
+  function saveChannels() {if (draftChannels.some((channel) => channel.platform === "other" && !channel.customName?.trim())) return; updateService(serviceId,{channels:draftChannels}); setEditingChannels(false);}
 
   function beginStageEdit() {
-    setDraftStages(getPrototypeStages(service));
+    setDraftStages(getServiceStages(service));
     setEditingStages(true);
   }
 
   function saveStages() {
     if (!draftStages.length || draftStages.some((stage) => !isPresetStage(stage) && !stage.label?.trim())) return;
-    updatePrototypeService(serviceId, {stages: draftStages});
+    updateService(serviceId, {stages: draftStages});
     setEditingStages(false);
   }
 
   function confirmDeleteCase() {
     if (!pendingDeleteCase) return;
-    deletePrototypeCase(serviceId, pendingDeleteCase.id);
+    deleteCase(serviceId, pendingDeleteCase.id);
     setPendingDeleteCase(null);
   }
 
   function effortLabel() {
-    const minutes = getPrototypeEffortMinutes(service);
+    const minutes = getServiceEffortMinutes(service);
     if (!minutes) return "—";
     const hours = Math.floor(minutes / 60);
     const remainder = minutes % 60;
@@ -86,7 +86,7 @@ export function ServiceDetailPage({serviceId}: {serviceId: string}) {
   }
 
   function turnaroundLabel() {
-    const days = getPrototypeTurnaroundDays(service);
+    const days = getServiceTurnaroundDays(service);
     if (typeof days !== "number") return "—";
     return days === 0 ? common("turnaround.sameDay") : common("turnaroundDays", {count: days});
   }
@@ -108,13 +108,13 @@ export function ServiceDetailPage({serviceId}: {serviceId: string}) {
     <section className="service-channel-section"><div><p className="prototype-eyebrow">{channelT("sectionEyebrow")}</p><h2>{channelT("sectionTitle")}</h2><span>{channelT("sectionDescription")}</span></div>{!editingChannels ? <>{service.channels?.length ? <div className="service-channel-list">{service.channels.map((channel) => <article key={channel.id}><strong>{channelLabel(channel)}</strong><span>{channel.launchedAt ? new Intl.DateTimeFormat(locale === "en" ? "en-US" : locale,{year:"numeric",month:"short",day:"numeric"}).format(new Date(`${channel.launchedAt}T12:00:00`)) : "—"}</span><small>{channelT(`statuses.${channel.status}`)}</small></article>)}</div> : <p className="service-channel-empty">{channelT("empty")}</p>}<button className="prototype-text-action" onClick={beginChannelEdit}><Pencil/>{channelT("edit")}</button></> : <div className="service-channel-edit"><ServiceChannelEditor channels={draftChannels} onChange={setDraftChannels}/><div><button className="prototype-quiet" onClick={() => setEditingChannels(false)}>{channelT("cancel")}</button><button className="prototype-primary" onClick={saveChannels}>{channelT("save")}</button></div></div>}</section>
     <section className="service-stage-template">
       <div><p className="prototype-eyebrow">{t("stages.eyebrow")}</p><h2>{t("stages.title")}</h2><span>{t("stages.description")}</span></div>
-      {!editingStages ? <><ol>{getPrototypeStages(service).map((stage, index) => <li key={stage.id}><span>{String(index + 1).padStart(2,"0")}</span><strong>{stage.label || caseT(`types.${stage.type}`)}</strong>{index < getPrototypeStages(service).length - 1 ? <ArrowRight/> : null}</li>)}</ol><button className="prototype-text-action" onClick={beginStageEdit}><Pencil/>{t("stages.edit")}</button></> : <div className="service-stage-editor"><StageBuilder stages={draftStages} onChange={setDraftStages} getLabel={(stage) => stage.label || caseT(`types.${stage.type}`)} addLabel={stageT("add")} addTypeLabel={stageT("typeLabel")} addNameLabel={stageT("nameLabel")} addConfirmLabel={stageT("confirmAdd")} addCancelLabel={stageT("cancelAdd")} presetLabel={stageT("presetLabel")} customPlaceholder={stageT("customPlaceholder")} description={t("stages.editorHint")}/><div><button className="prototype-quiet" onClick={() => setEditingStages(false)}>{t("cancel")}</button><button className="prototype-primary" onClick={saveStages} disabled={!draftStages.length || draftStages.some((stage) => !isPresetStage(stage) && !stage.label?.trim())}><Check/>{t("stages.save")}</button></div></div>}
+      {!editingStages ? <><ol>{getServiceStages(service).map((stage, index) => <li key={stage.id}><span>{String(index + 1).padStart(2,"0")}</span><strong>{stage.label || caseT(`types.${stage.type}`)}</strong>{index < getServiceStages(service).length - 1 ? <ArrowRight/> : null}</li>)}</ol><button className="prototype-text-action" onClick={beginStageEdit}><Pencil/>{t("stages.edit")}</button></> : <div className="service-stage-editor"><StageBuilder stages={draftStages} onChange={setDraftStages} getLabel={(stage) => stage.label || caseT(`types.${stage.type}`)} addLabel={stageT("add")} addTypeLabel={stageT("typeLabel")} addNameLabel={stageT("nameLabel")} addConfirmLabel={stageT("confirmAdd")} addCancelLabel={stageT("cancelAdd")} presetLabel={stageT("presetLabel")} customPlaceholder={stageT("customPlaceholder")} description={t("stages.editorHint")}/><div><button className="prototype-quiet" onClick={() => setEditingStages(false)}>{t("cancel")}</button><button className="prototype-primary" onClick={saveStages} disabled={!draftStages.length || draftStages.some((stage) => !isPresetStage(stage) && !stage.label?.trim())}><Check/>{t("stages.save")}</button></div></div>}
     </section>
     {service.assets?.length ? <section className="service-asset-library">
       <div><p className="prototype-eyebrow">{assetT("eyebrow")}</p><h2>{assetT("title")}</h2><span>{assetT("description")}</span></div>
       <div>{service.assets.map((asset) => <article key={asset.id}><Library/><div><span>{deliveryT(`roles.${asset.role}`)}</span><h3>{asset.title}</h3><p>{asset.content?.slice(0,100) || asset.fileName || asset.externalUrl}</p></div><small>{assetT("usage",{count:asset.usageCount})}</small></article>)}</div>
     </section> : null}
-    {service.cases.length ? <div className="prototype-list">{service.cases.map((item, index) => {const purchaseNumber = getPrototypePurchaseNumber(model, item); return <article key={item.id} className="prototype-row case-row">
+    {service.cases.length ? <div className="prototype-list">{service.cases.map((item, index) => {const purchaseNumber = getPurchaseNumber(model, item); return <article key={item.id} className="prototype-row case-row">
       <Link className="case-row-hit" href={`/services/${service.id}/cases/${item.id}`} aria-label={item.customer}/><span className="prototype-index">{String(index + 1).padStart(2,"0")}</span><div><h2>{item.customer}{purchaseNumber > 1 ? <small className="repeat-purchase-tag">{customerT("repeatShort", {number:purchaseNumber})}</small> : null}</h2><p>{item.occurredAt ? new Intl.DateTimeFormat(locale === "en" ? "en-US" : locale,{year:"numeric",month:"long",day:"numeric"}).format(new Date(`${item.occurredAt}T12:00:00`)) : item.summary || t("legacyCase")}</p></div><div className="prototype-meta"><span>{item.evidence.length ? t("caseHasFacts") : t("caseWaiting")}</span></div><button type="button" className="case-row-delete" aria-label={t("deleteCaseLabel",{name:item.customer})} onClick={() => setPendingDeleteCase(item)}><Trash2/></button><ArrowRight className="size-4"/>
     </article>;})}</div> : null}
     <NotebookEntry href={`/notebook?service=${service.id}#context`} eyebrow={notebookT("eyebrow")} title={notebookT("serviceTitle",{service:service.name})} description={service.cases.length ? notebookT("serviceBody",{cases:service.cases.length,evidence:serviceEvidenceCount}) : notebookT("serviceEmpty")} action={notebookT("action")}/>

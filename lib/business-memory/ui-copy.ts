@@ -1,10 +1,10 @@
-export type PrototypeLocale = "zh-CN" | "zh-TW" | "en-US";
+export type SupportedLocale = "zh-CN" | "zh-TW" | "en-US";
 
-export function prototypeLocale(locale:string):PrototypeLocale {
+export function resolveLocale(locale:string):SupportedLocale {
   return locale === "en" || locale === "en-US" ? "en-US" : locale === "zh-TW" ? "zh-TW" : "zh-CN";
 }
 
-export const prototypeUi = {
+export const businessMemoryUi = {
   "zh-CN": {
     nav:["服务与案例","证据观察","增长闭环","本地记忆"],
     notebookCta:["把这些判断变成本周行动","Bee 会选择三项优先动作，并生成可直接使用的营销素材。","查看增长计划"],

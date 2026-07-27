@@ -9,9 +9,9 @@ import {BusinessMemoryHeader} from "./business-memory-header";
 import {NotebookEntry} from "./notebook-entry";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {CaseDeliveryWorkspace} from "./case-delivery-workspace";
-import {addPrototypeEvidence, applyPrototypeCaseStatusProposal, confirmPrototypeCustomerIdentity, deletePrototypeEvidence, getPrototypeCaseStatus, getPrototypeStages, isPresetStage, type EvidenceAttachment, type EvidenceType, type PrototypeEvidence, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeEvidence, useBusinessMemory} from "@/lib/business-memory/store";
+import {addEvidence, applyCaseStatusProposal, confirmCustomerIdentity, deleteEvidence, getCaseStatus, getServiceStages, isPresetStage, type EvidenceAttachment, type EvidenceType, type BusinessEvidence, type ServiceChannel, type ServiceStage, updateEvidence, useBusinessMemory} from "@/lib/business-memory/store";
 import type {RecordExtraction} from "@/lib/domain/business-record";
-import {prototypeLocale,prototypeUi} from "@/lib/business-memory/ui-copy";
+import {resolveLocale,businessMemoryUi} from "@/lib/business-memory/ui-copy";
 
 const stageIcons: Record<EvidenceType, typeof MessageCircle> = {conversation:MessageCircle, quote:Quote, delivery:PackageCheck, feedback:StickyNote, note:StickyNote};
 
@@ -22,18 +22,18 @@ export function CaseDetailPage({serviceId, caseId, returnTo = "service"}: {servi
   const deliveryT = useTranslations("deliveryWorkspace");
   const notebookT = useTranslations("notebookEntry");
   const locale = useLocale();
-  const caseUi = prototypeUi[prototypeLocale(locale)].caseStory;
+  const caseUi = businessMemoryUi[resolveLocale(locale)].caseStory;
   const model = useBusinessMemory();
   const service = model.services.find((entry) => entry.id === serviceId);
   const item = service?.cases.find((entry) => entry.id === caseId);
   const customerEntity = model.customers?.find((entry) => entry.id === item?.customerId);
-  const [activeStage, setActiveStage] = useState<PrototypeStage | null>(null);
+  const [activeStage, setActiveStage] = useState<ServiceStage | null>(null);
   const [content, setContent] = useState("");
   const [amount, setAmount] = useState<number | "">("");
   const [attachment, setAttachment] = useState<EvidenceAttachment | undefined>();
-  const [pendingDelete, setPendingDelete] = useState<PrototypeEvidence | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<BusinessEvidence | null>(null);
 
-  function open(stage: PrototypeStage) {setActiveStage(stage); setContent(""); setAmount(""); setAttachment(undefined);}
+  function open(stage: ServiceStage) {setActiveStage(stage); setContent(""); setAmount(""); setAttachment(undefined);}
   function close() {setActiveStage(null); setContent(""); setAmount(""); setAttachment(undefined);}
   function chooseImage(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -42,18 +42,18 @@ export function CaseDetailPage({serviceId, caseId, returnTo = "service"}: {servi
     reader.onload = () => setAttachment({name:file.name, dataUrl:String(reader.result)});
     reader.readAsDataURL(file);
   }
-  function sourceType(type: EvidenceType, stage?: PrototypeStage) {
+  function sourceType(type: EvidenceType, stage?: ServiceStage) {
     if (stage && !isPresetStage(stage)) return "auto";
     return type === "conversation" ? "customer_chat" : type === "delivery" ? "delivery_note" : type === "feedback" ? "customer_feedback" : "manual_note";
   }
   async function organize(evidenceId: string, rawText: string, type: EvidenceType, stageId?: string) {
     if (rawText.trim().length < 5) return;
-    updatePrototypeEvidence(serviceId,caseId,evidenceId,{extractionStatus:"processing"});
+    updateEvidence(serviceId,caseId,evidenceId,{extractionStatus:"processing"});
     try {
-      const stage = getPrototypeStages(item?.stages?.length ? {stages:item.stages} : service).find((entry) => entry.id === stageId);
+      const stage = getServiceStages(item?.stages?.length ? {stages:item.stages} : service).find((entry) => entry.id === stageId);
       const discovery = item?.discoveryChannel ?? service?.channels?.find((channel) => channel.id === item?.discoveryChannelId);
       const transaction = item?.transactionChannel ?? service?.channels?.find((channel) => channel.id === item?.transactionChannelId);
-      const readableChannel = (channel?: PrototypeServiceChannel) => channel ? channel.platform === "other" ? channel.customName || channelT("platforms.other") : channelT(`platforms.${channel.platform}`) : null;
+      const readableChannel = (channel?: ServiceChannel) => channel ? channel.platform === "other" ? channel.customName || channelT("platforms.other") : channelT(`platforms.${channel.platform}`) : null;
       const response = await fetch("/api/records/extract",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
         rawText,
         sourceType:sourceType(type,stage),
@@ -69,7 +69,7 @@ export function CaseDetailPage({serviceId, caseId, returnTo = "service"}: {servi
           serviceListPrice:service?.price ?? null,
           purchaseNumber:item?.purchaseNumber ?? null,
           customerId:item?.customerId ?? null,
-          caseStatus:item ? getPrototypeCaseStatus(item) : null,
+          caseStatus:item ? getCaseStatus(item) : null,
           stageOrigin:stage?.origin ?? (stage && isPresetStage(stage) ? "preset" : "custom"),
           knownCustomerIdentities:customerEntity?.identities.map((identity) => identity.label) ?? [item?.customer].filter(Boolean),
           providerIdentities:[],
@@ -77,9 +77,9 @@ export function CaseDetailPage({serviceId, caseId, returnTo = "service"}: {servi
       })});
       if (!response.ok) throw new Error("Extraction failed");
       const payload = await response.json() as {extraction: RecordExtraction; promptVersion?: string};
-      updatePrototypeEvidence(serviceId,caseId,evidenceId,{extractionStatus:"ready",extractionSummary:payload.extraction.summary,extractedFacts:payload.extraction.facts.slice(0,8).map((fact) => ({label:fact.label,value:fact.value,confidence:fact.confidence})),detectedSourceKind:payload.extraction.detectedSourceKind,sourceHintConflict:payload.extraction.sourceHintConflict,identityCandidates:payload.extraction.identityCandidates,businessEvents:payload.extraction.businessEvents,outcomeClaims:payload.extraction.outcomeClaims,caseStatusProposals:payload.extraction.caseStatusProposals,extractionVersion:payload.promptVersion});
+      updateEvidence(serviceId,caseId,evidenceId,{extractionStatus:"ready",extractionSummary:payload.extraction.summary,extractedFacts:payload.extraction.facts.slice(0,8).map((fact) => ({label:fact.label,value:fact.value,confidence:fact.confidence})),detectedSourceKind:payload.extraction.detectedSourceKind,sourceHintConflict:payload.extraction.sourceHintConflict,identityCandidates:payload.extraction.identityCandidates,businessEvents:payload.extraction.businessEvents,outcomeClaims:payload.extraction.outcomeClaims,caseStatusProposals:payload.extraction.caseStatusProposals,extractionVersion:payload.promptVersion});
     } catch {
-      updatePrototypeEvidence(serviceId,caseId,evidenceId,{extractionStatus:"failed"});
+      updateEvidence(serviceId,caseId,evidenceId,{extractionStatus:"failed"});
     }
   }
   function save() {
@@ -88,18 +88,18 @@ export function CaseDetailPage({serviceId, caseId, returnTo = "service"}: {servi
     if (activeStage.type !== "quote" && !content.trim() && !attachment) return;
     const rawText = content || (activeStage.type === "quote" ? t("quoteFact",{amount:Number(amount)}) : "");
     const shouldOrganize = content.trim().length >= 5;
-    const evidence = addPrototypeEvidence(serviceId, caseId, activeStage.type, rawText, {stageId: activeStage.id, amount:amount === "" ? undefined : Number(amount), attachment, extractionStatus:shouldOrganize ? "processing" : undefined});
+    const evidence = addEvidence(serviceId, caseId, activeStage.type, rawText, {stageId: activeStage.id, amount:amount === "" ? undefined : Number(amount), attachment, extractionStatus:shouldOrganize ? "processing" : undefined});
     close();
     if (shouldOrganize) void organize(evidence.id,rawText,activeStage.type,activeStage.id);
   }
-  function confirmDelete() {if (!pendingDelete) return; deletePrototypeEvidence(serviceId,caseId,pendingDelete.id); setPendingDelete(null);}
+  function confirmDelete() {if (!pendingDelete) return; deleteEvidence(serviceId,caseId,pendingDelete.id); setPendingDelete(null);}
 
   if (!service || !item) return <main className="prototype-canvas min-h-dvh"><BusinessMemoryHeader/><section className="prototype-shell"><div className="prototype-empty"><h1>{t("notFound")}</h1><Link className="prototype-text-action" href="/services">{t("services")}</Link></div></section></main>;
 
   const dateLocale = locale === "en" ? "en-US" : locale;
   const date = item.occurredAt ? new Intl.DateTimeFormat(dateLocale,{year:"numeric",month:"long",day:"numeric"}).format(new Date(`${item.occurredAt}T12:00:00`)) : item.summary || t("legacyCase");
-  const journey = getPrototypeStages(item.stages?.length ? {stages: item.stages} : service);
-  const channelLabel = (channel?: PrototypeServiceChannel) => channel ? channel.platform === "other" ? channel.customName || channelT("platforms.other") : channelT(`platforms.${channel.platform}`) : "";
+  const journey = getServiceStages(item.stages?.length ? {stages: item.stages} : service);
+  const channelLabel = (channel?: ServiceChannel) => channel ? channel.platform === "other" ? channel.customName || channelT("platforms.other") : channelT(`platforms.${channel.platform}`) : "";
   const discoveryChannel = item.discoveryChannel ?? service.channels?.find((channel) => channel.id === item.discoveryChannelId);
   const transactionChannel = item.transactionChannel ?? service.channels?.find((channel) => channel.id === item.transactionChannelId);
   const businessEventCount = item.evidence.reduce((count,evidence) => count + (evidence.businessEvents?.length ?? 0),0);
@@ -148,8 +148,8 @@ export function CaseDetailPage({serviceId, caseId, returnTo = "service"}: {servi
       {evidence.extractionStatus === "ready" && evidence.extractionSummary ? <div className="evidence-extraction"><h3>{evidence.extractionSummary}</h3>{evidence.extractedFacts?.length ? <dl>{evidence.extractedFacts.map((fact,index) => <div key={`${fact.label}-${index}`}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}</dl> : null}</div> : null}
       {evidence.businessEvents?.length ? <div className="evidence-business-events"><p>{evidenceT("eventsTitle")}</p>{evidence.businessEvents.map((event,index) => <section key={`${event.type}-${index}`}><span>{event.title}</span><p>{event.summary}</p>{event.nextActions.length ? <small>{evidenceT("nextAction",{action:event.nextActions.join(" · ")})}</small> : null}</section>)}</div> : null}
       {evidence.outcomeClaims?.length ? <div className="evidence-outcomes"><p>{evidenceT("outcomesTitle")}</p>{evidence.outcomeClaims.map((outcome,index) => <span key={`${outcome.theme}-${index}`}>{outcome.theme} · {outcome.statement}<small>{evidenceT(`verification.${outcome.verification}`)}</small></span>)}</div> : null}
-      {evidence.caseStatusProposals?.filter((proposal) => getPrototypeCaseStatus(item)[proposal.dimension] !== proposal.to).map((proposal,index) => <div className="evidence-state-proposal" key={`${proposal.dimension}-${proposal.to}-${index}`}><div><span>{evidenceT("stateProposal")}</span><strong>{deliveryT(`dimensions.${proposal.dimension}`)} · {deliveryT(`statuses.${proposal.dimension}.${proposal.to}`)}</strong><p>{proposal.reason}</p></div><button type="button" onClick={() => applyPrototypeCaseStatusProposal(serviceId,caseId,proposal)}>{evidenceT("confirmState")}</button></div>)}
-      {evidence.identityCandidates?.filter((candidate) => candidate.needsConfirmation && candidate.proposedCustomerId === item.customerId && !customerEntity?.identities.some((identity) => identity.normalizedLabel === candidate.displayName.trim().replace(/\s+/g," ").toLocaleLowerCase())).map((candidate,index) => <div className="evidence-identity-proposal" key={`${candidate.displayName}-${index}`}><span>{evidenceT("identityQuestion",{candidate:candidate.displayName,customer:item.customer})}</span><button type="button" onClick={() => confirmPrototypeCustomerIdentity(item.customerId!,candidate)}>{evidenceT("confirmIdentity")}</button></div>)}
+      {evidence.caseStatusProposals?.filter((proposal) => getCaseStatus(item)[proposal.dimension] !== proposal.to).map((proposal,index) => <div className="evidence-state-proposal" key={`${proposal.dimension}-${proposal.to}-${index}`}><div><span>{evidenceT("stateProposal")}</span><strong>{deliveryT(`dimensions.${proposal.dimension}`)} · {deliveryT(`statuses.${proposal.dimension}.${proposal.to}`)}</strong><p>{proposal.reason}</p></div><button type="button" onClick={() => applyCaseStatusProposal(serviceId,caseId,proposal)}>{evidenceT("confirmState")}</button></div>)}
+      {evidence.identityCandidates?.filter((candidate) => candidate.needsConfirmation && candidate.proposedCustomerId === item.customerId && !customerEntity?.identities.some((identity) => identity.normalizedLabel === candidate.displayName.trim().replace(/\s+/g," ").toLocaleLowerCase())).map((candidate,index) => <div className="evidence-identity-proposal" key={`${candidate.displayName}-${index}`}><span>{evidenceT("identityQuestion",{candidate:candidate.displayName,customer:item.customer})}</span><button type="button" onClick={() => confirmCustomerIdentity(item.customerId!,candidate)}>{evidenceT("confirmIdentity")}</button></div>)}
       {evidence.extractionStatus === "failed" ? <button className="evidence-organize" type="button" onClick={() => void organize(evidence.id,evidence.content,evidence.type,evidence.stageId)}><Sparkles/>{evidenceT("retry")}</button> : null}
       {evidence.extractionStatus === "ready" && evidence.content.trim().length >= 5 ? <button className="evidence-organize" type="button" onClick={() => void organize(evidence.id,evidence.content,evidence.type,evidence.stageId)}><Sparkles/>{evidenceT("refresh")}</button> : null}
       {!evidence.extractionStatus && evidence.content.trim().length >= 5 && !evidence.amount ? <button className="evidence-organize" type="button" onClick={() => void organize(evidence.id,evidence.content,evidence.type,evidence.stageId)}><Sparkles/>{evidenceT("organize")}</button> : null}

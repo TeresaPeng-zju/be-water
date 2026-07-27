@@ -10,7 +10,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import ScrollStack, {ScrollStackItem} from "@/components/ui/scroll-stack";
 import {SpecularButton} from "@/components/ui/specular-button";
 import {ServiceChannelEditor} from "./service-channel-editor";
-import {addPrototypeService, defaultPrototypeStages, deletePrototypeService, duplicatePrototypeService, getPrototypeEffortMinutes, getPrototypeTurnaroundDays, isPresetStage, reorderServicesPage, type PricingMode, type PrototypeService, type PrototypeServiceChannel, type PrototypeStage, updatePrototypeService, useBusinessMemory} from "@/lib/business-memory/store";
+import {addService, defaultServiceStages, deleteService, duplicateService, getServiceEffortMinutes, getServiceTurnaroundDays, isPresetStage, reorderServices, type PricingMode, type BusinessService, type ServiceChannel, type ServiceStage, updateService, useBusinessMemory} from "@/lib/business-memory/store";
 
 const serviceSuggestions = ["careerPlanning", "resume", "interview", "aiConsulting"] as const;
 const pricingModes: PricingMode[] = ["session", "hourly", "package", "retainer"];
@@ -33,27 +33,27 @@ export function ServicesPage() {
   const [price, setPrice] = useState<number | "">("");
   const [effortMinutes, setEffortMinutes] = useState<number | "">("");
   const [turnaroundDays, setTurnaroundDays] = useState<number | "">("");
-  const [channels, setChannels] = useState<PrototypeServiceChannel[]>([]);
-  const [stages, setStages] = useState<PrototypeStage[]>(() => defaultPrototypeStages.map((stage) => ({...stage})));
+  const [channels, setChannels] = useState<ServiceChannel[]>([]);
+  const [stages, setStages] = useState<ServiceStage[]>(() => defaultServiceStages.map((stage) => ({...stage})));
   const [draggingServiceId, setDraggingServiceId] = useState<string | null>(null);
-  const [pendingDelete, setPendingDelete] = useState<PrototypeService | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<BusinessService | null>(null);
 
   const answers = [Boolean(name.trim()), Boolean(pricingMode), price !== "" && price > 0, effortMinutes !== "" && effortMinutes >= 10 && effortMinutes % 10 === 0, turnaroundDays !== "" && turnaroundDays >= 0 && Number.isInteger(turnaroundDays), channels.length > 0 && channels.every((channel) => channel.platform !== "other" || Boolean(channel.customName?.trim())), stages.length > 0 && stages.every((stage) => isPresetStage(stage) || Boolean(stage.label?.trim()))];
 
   function resetFlow() {
-    setOpen(false); setStep(0); setName(""); setCustomName(""); setPricingMode(""); setPrice(""); setEffortMinutes(""); setTurnaroundDays(""); setChannels([]); setStages(defaultPrototypeStages.map((stage) => ({...stage})));
+    setOpen(false); setStep(0); setName(""); setCustomName(""); setPricingMode(""); setPrice(""); setEffortMinutes(""); setTurnaroundDays(""); setChannels([]); setStages(defaultServiceStages.map((stage) => ({...stage})));
   }
 
   function next() {
     if (!answers[step]) return;
     if (step < 6) setStep((current) => current + 1);
     else {
-      addPrototypeService({name, pricingMode: pricingMode as PricingMode, price: Number(price), effortMinutes: Number(effortMinutes), turnaroundDays: Number(turnaroundDays), channels, stages});
+      addService({name, pricingMode: pricingMode as PricingMode, price: Number(price), effortMinutes: Number(effortMinutes), turnaroundDays: Number(turnaroundDays), channels, stages});
       resetFlow();
     }
   }
 
-  function lastUpdated(service: PrototypeService) {
+  function lastUpdated(service: BusinessService) {
     const timestamps = [service.updatedAt, service.createdAt, ...service.cases.flatMap((item) => [item.occurredAt ? `${item.occurredAt}T12:00:00` : item.createdAt, ...item.evidence.map((evidence) => evidence.createdAt)])]
       .filter(Boolean)
       .map((value) => new Date(value as string).getTime());
@@ -61,8 +61,8 @@ export function ServicesPage() {
     return new Intl.DateTimeFormat(locale === "en" ? "en-US" : locale, {month: "short", day: "numeric", year: date.getFullYear() === new Date().getFullYear() ? undefined : "numeric"}).format(date);
   }
 
-  function effortLabel(service: PrototypeService) {
-    const minutes = getPrototypeEffortMinutes(service);
+  function effortLabel(service: BusinessService) {
+    const minutes = getServiceEffortMinutes(service);
     if (!minutes) return "—";
     const hours = Math.floor(minutes / 60);
     const remainder = minutes % 60;
@@ -71,8 +71,8 @@ export function ServicesPage() {
     return t("effortHoursMinutes", {hours, minutes: remainder});
   }
 
-  function turnaroundLabel(service: PrototypeService) {
-    const days = getPrototypeTurnaroundDays(service);
+  function turnaroundLabel(service: BusinessService) {
+    const days = getServiceTurnaroundDays(service);
     if (typeof days !== "number") return "—";
     return days === 0 ? t("turnaround.sameDay") : t("turnaroundDays", {count: days});
   }
@@ -87,14 +87,14 @@ export function ServicesPage() {
     setTurnaroundDays(Math.min(365, Math.max(0, current + amount)));
   }
 
-  function editService(service: PrototypeService) {
+  function editService(service: BusinessService) {
     const nextName = window.prompt(t("menu.editPrompt"), service.name);
-    if (nextName?.trim()) updatePrototypeService(service.id, {name: nextName.trim()});
+    if (nextName?.trim()) updateService(service.id, {name: nextName.trim()});
   }
 
   function confirmDelete() {
     if (!pendingDelete) return;
-    deletePrototypeService(pendingDelete.id);
+    deleteService(pendingDelete.id);
     setPendingDelete(null);
   }
 
@@ -156,7 +156,7 @@ export function ServicesPage() {
               onDragStart={() => setDraggingServiceId(service.id)}
               onDragEnd={() => setDraggingServiceId(null)}
               onDragOver={(event) => event.preventDefault()}
-              onDrop={() => {if (draggingServiceId) reorderServicesPage(draggingServiceId, service.id);}}
+              onDrop={() => {if (draggingServiceId) reorderServices(draggingServiceId, service.id);}}
               title={t("dragHint")}
             >
               <Link href={`/services/${service.id}`} className="service-row-hit" aria-label={service.name}/>
@@ -168,7 +168,7 @@ export function ServicesPage() {
                 <summary aria-label={t("menu.label")}><MoreHorizontal/></summary>
                 <div>
                   <button type="button" onClick={() => editService(service)}><Pencil/>{t("menu.edit")}</button>
-                  <button type="button" onClick={() => duplicatePrototypeService(service.id, t("copyName", {name: service.name}))}><Copy/>{t("menu.duplicate")}</button>
+                  <button type="button" onClick={() => duplicateService(service.id, t("copyName", {name: service.name}))}><Copy/>{t("menu.duplicate")}</button>
                   <button type="button" className="is-danger" onClick={() => setPendingDelete(service)}><Trash2/>{t("menu.delete")}</button>
                 </div>
               </details>

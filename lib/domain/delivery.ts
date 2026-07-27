@@ -35,7 +35,7 @@ export type DeliveryStatus = (typeof deliveryStatuses)[number];
 export type PaymentStatus = (typeof paymentStatuses)[number];
 export type OutcomeStatus = (typeof outcomeStatuses)[number];
 
-export type PrototypeCaseStatus = {
+export type CaseStatus = {
   commercial: CommercialStatus;
   delivery: DeliveryStatus;
   payment: PaymentStatus;
@@ -86,7 +86,7 @@ export function isReusableServiceAssetRole(role: DeliveryMaterialRole) {
   return (reusableServiceAssetRoles as readonly DeliveryMaterialRole[]).includes(role);
 }
 
-export type PrototypeDeliveryMaterial = {
+export type DeliveryMaterial = {
   id: string;
   title: string;
   role: DeliveryMaterialRole;
@@ -106,7 +106,7 @@ export type PrototypeDeliveryMaterial = {
   updatedAt: string;
 };
 
-export type PrototypeServiceAsset = {
+export type ServiceAsset = {
   id: string;
   title: string;
   role: DeliveryMaterialRole;
@@ -136,7 +136,7 @@ export type DeliveryRelationLink = {
   kind:"fulfills"|"validates";
 };
 
-export type PrototypeDeliveryRelation = {
+export type DeliveryRelation = {
   threadId: string;
   planned: DeliveryRelationItem[];
   actual: DeliveryRelationItem[];

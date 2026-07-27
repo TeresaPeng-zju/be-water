@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { RecordExtraction } from "@/lib/domain/business-record";
 import type { CaseStatusDimension } from "@/lib/domain/delivery";
-import {getPrototypeCaseStatus,saveWorkspaceExtraction,useBusinessMemory} from "@/lib/business-memory/store";
+import {getCaseStatus,saveWorkspaceExtraction,useBusinessMemory} from "@/lib/business-memory/store";
 import { Button } from "@/components/ui/button";
 
 type Phase = "input" | "confirm" | "saved";
@@ -49,7 +49,7 @@ export function RecordWorkspace({ caseId }: { caseId?: string }) {
           stageType: "case_record",
           transactionConfirmed: ["booked","confirmed","closed"].includes(linkedCase.status.commercial),
           serviceListPrice: linkedService?.price ?? null,
-          caseStatus: getPrototypeCaseStatus(linkedCase),
+          caseStatus: getCaseStatus(linkedCase),
           knownCustomerIdentities: memory.customers?.find((entry)=>entry.id===linkedCase.customerId)?.identities.map((identity)=>identity.label) ?? [linkedCase.customer],
           providerIdentities: [],
         } : undefined,

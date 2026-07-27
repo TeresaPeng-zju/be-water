@@ -2,12 +2,12 @@
 
 import {Check, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
-import {type ChannelStatus, type PlatformType, type PrototypeServiceChannel} from "@/lib/business-memory/store";
+import {type ChannelStatus, type PlatformType, type ServiceChannel} from "@/lib/business-memory/store";
 
 const platforms: PlatformType[] = ["xianyu", "xiaohongshu", "zhishixingqiu", "wechat", "douyin", "offline", "other"];
 const statuses: ChannelStatus[] = ["testing", "active", "paused"];
 
-export function ServiceChannelEditor({channels, onChange}: {channels: PrototypeServiceChannel[]; onChange: (channels: PrototypeServiceChannel[]) => void}) {
+export function ServiceChannelEditor({channels, onChange}: {channels: ServiceChannel[]; onChange: (channels: ServiceChannel[]) => void}) {
   const t = useTranslations("channels");
 
   function toggle(platform: PlatformType) {
@@ -16,7 +16,7 @@ export function ServiceChannelEditor({channels, onChange}: {channels: PrototypeS
     else onChange([...channels, {id:crypto.randomUUID(), platform, status:"active", launchedAt:new Date().toISOString().slice(0,10)}]);
   }
 
-  function update(id: string, input: Partial<PrototypeServiceChannel>) {
+  function update(id: string, input: Partial<ServiceChannel>) {
     onChange(channels.map((channel) => channel.id === id ? {...channel, ...input} : channel));
   }
 

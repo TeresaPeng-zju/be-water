@@ -5,18 +5,18 @@ import {useState} from "react";
 import {useLocale} from "next-intl";
 import {ArrowRight,BarChart3,Check,ChevronDown,Clipboard,ExternalLink,Sparkles,Target} from "lucide-react";
 import {BusinessMemoryHeader} from "./business-memory-header";
-import {applyMockGrowthResults,createGrowthPlanFromEvidence,isMockEnabled,markAllGrowthActionsExecuted,reviseGrowthPlan,updateGrowthAction,useBusinessMemory,type GrowthAction,type GrowthMetrics} from "@/lib/business-memory/store";
-import {prototypeLocale,prototypeUi} from "@/lib/business-memory/ui-copy";
+import {applyDemoGrowthResults,createGrowthPlanFromEvidence,isDemoEnabled,markAllGrowthActionsExecuted,reviseGrowthPlan,updateGrowthAction,useBusinessMemory,type GrowthAction,type GrowthMetrics} from "@/lib/business-memory/store";
+import {resolveLocale,businessMemoryUi} from "@/lib/business-memory/ui-copy";
 const emptyMetrics:GrowthMetrics = {impressions:0,engagements:0,inquiries:0,bookings:0,sales:0,revenue:0};
 
 export function GrowthLoopPage() {
-  const locale=prototypeLocale(useLocale());
-  const ui=prototypeUi[locale];
+  const locale=resolveLocale(useLocale());
+  const ui=businessMemoryUi[locale];
   const growth=ui.growth;
   const channelLabels=ui.channels;
   const statusLabels=ui.statuses;
   const model = useBusinessMemory();
-  const mockOn = isMockEnabled();
+  const mockOn = isDemoEnabled();
   const [activeActionId,setActiveActionId] = useState<string>();
   const [copied,setCopied] = useState<string>();
   const [editingResult,setEditingResult] = useState<string>();
@@ -75,7 +75,7 @@ export function GrowthLoopPage() {
     </section>
 
     <section className="growth-results-section">
-      <div className="growth-section-head"><div><p>{growth.results}</p><h2>{growth.resultsTitle}</h2></div>{mockOn?<button className="mock-result-button" onClick={applyMockGrowthResults}><Sparkles/>{growth.fillResults}</button>:null}</div>
+      <div className="growth-section-head"><div><p>{growth.results}</p><h2>{growth.resultsTitle}</h2></div>{mockOn?<button className="mock-result-button" onClick={applyDemoGrowthResults}><Sparkles/>{growth.fillResults}</button>:null}</div>
       <div className="growth-result-totals">{[[ui.metrics[0],totals.impressions],[ui.metrics[2],totals.inquiries],[ui.metrics[3],totals.bookings],[ui.metrics[4],totals.sales],[ui.metrics[5],`¥${totals.revenue}`]].map(([label,value])=><div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>
       <div className="growth-result-list">{plan.actions.map((action)=><article key={action.id}><div><small>{channelLabels[action.channel]}</small><h3>{action.title}</h3></div>{action.metrics?<dl><div><dt>{ui.metrics[0]}</dt><dd>{action.metrics.impressions}</dd></div><div><dt>{ui.metrics[2]}</dt><dd>{action.metrics.inquiries}</dd></div><div><dt>{ui.metrics[3]}</dt><dd>{action.metrics.bookings}</dd></div><div><dt>{ui.metrics[4]}</dt><dd>{action.metrics.sales}</dd></div></dl>:<span>{growth.noResult}</span>}<button onClick={()=>startResult(action)}>{action.metrics?growth.edit:growth.record}</button></article>)}</div>
       {editingResult?<ResultEditor metrics={draftMetrics} labels={ui.metrics} copy={growth} onChange={setDraftMetrics} onCancel={()=>setEditingResult(undefined)} onSave={()=>{updateGrowthAction(plan.id,editingResult,{status:"measured",metrics:draftMetrics});setEditingResult(undefined);}}/>:null}

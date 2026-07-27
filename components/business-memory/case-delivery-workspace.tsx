@@ -5,13 +5,13 @@ import {ArrowRight, Check, FileText, FileUp, Link2, PackageCheck, Plus, Sparkles
 import {useTranslations} from "next-intl";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
-  addPrototypeDeliveryMaterial,
-  deletePrototypeDeliveryMaterial,
-  getPrototypeCaseStatus,
-  getPrototypeDeliveryRelation,
-  promotePrototypeMaterialToAsset,
-  reusePrototypeServiceAsset,
-  updatePrototypeCaseStatus,
+  addDeliveryMaterial,
+  deleteDeliveryMaterial,
+  getCaseStatus,
+  getDeliveryRelation,
+  promoteMaterialToAsset,
+  reuseServiceAsset,
+  updateCaseStatus,
   useBusinessMemory,
 } from "@/lib/business-memory/store";
 import {
@@ -27,7 +27,7 @@ import {
   type DeliveryStatus,
   type OutcomeStatus,
   type PaymentStatus,
-  type PrototypeDeliveryMaterial,
+  type DeliveryMaterial,
 } from "@/lib/domain/delivery";
 
 const maxLocalFileBytes = 1_500_000;
@@ -64,13 +64,13 @@ export function CaseDeliveryWorkspace({serviceId,caseId}:{serviceId:string;caseI
   const [fulfillsMaterialIds,setFulfillsMaterialIds] = useState<string[]>([]);
   const [validatesMaterialIds,setValidatesMaterialIds] = useState<string[]>([]);
   const [fileError,setFileError] = useState("");
-  const [pendingDelete,setPendingDelete] = useState<PrototypeDeliveryMaterial | null>(null);
+  const [pendingDelete,setPendingDelete] = useState<DeliveryMaterial | null>(null);
 
   if (!service || !item) return null;
 
-  const status = getPrototypeCaseStatus(item);
+  const status = getCaseStatus(item);
   const materials = item.materials ?? [];
-  const relation = getPrototypeDeliveryRelation(item);
+  const relation = getDeliveryRelation(item);
   const promotedAssets = new Set((service.assets ?? []).map((asset) => asset.sourceMaterialId));
   const reusedAssetIds = new Set(materials.flatMap((material) => material.promotedAssetId ? [material.promotedAssetId] : []));
 
@@ -110,12 +110,12 @@ export function CaseDeliveryWorkspace({serviceId,caseId}:{serviceId:string;caseI
       }
     }
     const format:DeliveryMaterialFormat = selectedFile ? fileFormat(selectedFile) : externalUrl.trim() ? "link" : "text";
-    addPrototypeDeliveryMaterial(serviceId,caseId,{title,role,format,content:textContent,fileName:selectedFile?.name,mimeType:selectedFile?.type,dataUrl,externalUrl:externalUrl.trim() || undefined,linkedEvidenceIds,fulfillsMaterialIds:role === "actual_deliverable" ? fulfillsMaterialIds : [],validatesMaterialIds:role === "customer_outcome" ? validatesMaterialIds : []});
+    addDeliveryMaterial(serviceId,caseId,{title,role,format,content:textContent,fileName:selectedFile?.name,mimeType:selectedFile?.type,dataUrl,externalUrl:externalUrl.trim() || undefined,linkedEvidenceIds,fulfillsMaterialIds:role === "actual_deliverable" ? fulfillsMaterialIds : [],validatesMaterialIds:role === "customer_outcome" ? validatesMaterialIds : []});
     resetComposer();
   }
 
   function updateDimension(dimension:"commercial"|"delivery"|"payment"|"outcome",value:string) {
-    updatePrototypeCaseStatus(serviceId,caseId,{
+    updateCaseStatus(serviceId,caseId,{
       ...status,
       [dimension]:value,
       updatedAt:new Date().toISOString(),
@@ -133,7 +133,7 @@ export function CaseDeliveryWorkspace({serviceId,caseId}:{serviceId:string;caseI
 
   function confirmDelete() {
     if (!pendingDelete) return;
-    deletePrototypeDeliveryMaterial(serviceId,caseId,pendingDelete.id);
+    deleteDeliveryMaterial(serviceId,caseId,pendingDelete.id);
     setPendingDelete(null);
   }
 
@@ -154,7 +154,7 @@ export function CaseDeliveryWorkspace({serviceId,caseId}:{serviceId:string;caseI
         <div><Sparkles/><span>{assetT("title")}</span></div>
         <div>{service.assets.map((asset) => {
           const alreadyUsed = reusedAssetIds.has(asset.id);
-          return <button type="button" key={asset.id} disabled={alreadyUsed} onClick={() => reusePrototypeServiceAsset(serviceId,caseId,asset.id)}>
+          return <button type="button" key={asset.id} disabled={alreadyUsed} onClick={() => reuseServiceAsset(serviceId,caseId,asset.id)}>
             <span>{t(`roles.${asset.role}`)}</span>
             <strong>{asset.title}</strong>
             <small>{alreadyUsed ? assetT("used") : assetT("use")}</small>
@@ -176,7 +176,7 @@ export function CaseDeliveryWorkspace({serviceId,caseId}:{serviceId:string;caseI
       {materials.length ? <div className="material-list">{materials.map((material) => <article key={material.id}>
         <div className="material-icon">{material.format === "link" ? <Link2/> : material.role === "actual_deliverable" ? <PackageCheck/> : <FileText/>}</div>
         <div><span>{t(`roles.${material.role}`)}</span><h3>{material.title}</h3><p>{material.content?.slice(0,120) || material.fileName || material.externalUrl}</p>{material.linkedEvidenceIds.length ? <small>{t("linkedFacts",{count:material.linkedEvidenceIds.length})}</small> : null}{(material.fulfillsMaterialIds?.length ?? 0) > 0 ? <small>{relationT("fulfillsCount",{count:material.fulfillsMaterialIds.length})}</small> : null}{(material.validatesMaterialIds?.length ?? 0) > 0 ? <small>{relationT("validatesCount",{count:material.validatesMaterialIds.length})}</small> : null}</div>
-        <div className="material-actions">{material.externalUrl ? <a href={material.externalUrl} target="_blank" rel="noreferrer">{t("open")}</a> : material.dataUrl ? <a href={material.dataUrl} download={material.fileName}>{t("download")}</a> : null}{isReusableServiceAssetRole(material.role) ? <button type="button" disabled={Boolean(material.promotedAssetId) || promotedAssets.has(material.id)} onClick={() => promotePrototypeMaterialToAsset(serviceId,caseId,material.id)}><Sparkles/>{material.promotedAssetId || promotedAssets.has(material.id) ? t("promoted") : t("promote")}</button> : null}<button type="button" aria-label={t("delete")} onClick={() => setPendingDelete(material)}><Trash2/></button></div>
+        <div className="material-actions">{material.externalUrl ? <a href={material.externalUrl} target="_blank" rel="noreferrer">{t("open")}</a> : material.dataUrl ? <a href={material.dataUrl} download={material.fileName}>{t("download")}</a> : null}{isReusableServiceAssetRole(material.role) ? <button type="button" disabled={Boolean(material.promotedAssetId) || promotedAssets.has(material.id)} onClick={() => promoteMaterialToAsset(serviceId,caseId,material.id)}><Sparkles/>{material.promotedAssetId || promotedAssets.has(material.id) ? t("promoted") : t("promote")}</button> : null}<button type="button" aria-label={t("delete")} onClick={() => setPendingDelete(material)}><Trash2/></button></div>
       </article>)}</div> : <p className="materials-empty">{t("materialsEmpty")}</p>}
     </section>
 
